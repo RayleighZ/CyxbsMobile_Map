@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    //测试数据
+    <color name="map_activity_background_color">#96ecbb</color>
+    <color name="map_activity_search_history_color">#244780</color>
+
+</resources>
+
