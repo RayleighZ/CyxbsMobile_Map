@@ -4,19 +4,31 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.os.Bundle
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnImageEventListener
+import com.mredrock.cyxbs.common.BaseApp
+import com.mredrock.cyxbs.common.component.RedRockBottomSheetDialog
 import com.mredrock.cyxbs.common.ui.BaseActivity
+import com.mredrock.cyxbs.common.ui.BaseViewModelActivity
+import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
+import com.mredrock.cyxbs.discover.map.database.PlaceDatabase
+import com.mredrock.cyxbs.discover.map.view.fragment.DetailFragment
+import com.mredrock.cyxbs.discover.map.viewmodel.MapViewModel
 import kotlinx.android.synthetic.main.map_activity_map.*
 import java.lang.Exception
+import java.lang.ref.WeakReference
 
-class MapActivity : BaseActivity() {
+class MapActivity : BaseViewModelActivity<MapViewModel>() {
+
     override val isFragmentActivity = false
+    override val viewModelClass = MapViewModel::class.java
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,16 +48,25 @@ class MapActivity : BaseActivity() {
                 toGate(1558f, 8714f)    //大门测试数据
 
                 //地点测试数据
-                val place = Place()
+                /*val place = Place()
                 place.placeName = "老图书馆"
                 place.buildingX = 3677
                 place.buildingY = 7832
                 place.buildingR = 175
                 place.tagX = 3440
                 place.tagY = 7925
-                place.tagR = 78
+                place.tagR = 78*/
 
-                PlaceData.placeList.add(place)
+                //findViewById<FrameLayout>(R.id.fm_detail).
+                //viewModel.setIcon(WeakReference(findViewById(R.id.rl_map_icon_container)) , "操场")
+                loadDetailFragment()
+
+                Thread(Runnable {
+                    val placeArray = PlaceDatabase.getDataBase(this@MapActivity)
+                            .getPlaceDao().queryAllPlaces()
+                    PlaceData.placeList.add(placeArray[0])
+                    //PlaceData.placeList[0].placeName?.let { LogUtils.d("MapActivity" , it) }
+                }).start()
             }
 
             override fun onTileLoadError(e: Exception?) {
@@ -79,5 +100,18 @@ class MapActivity : BaseActivity() {
             animationBuilder?.withDuration(1000)?.withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)?.withInterruptible(false)?.start()
 
         }
+    }
+
+    fun loadDetailFragment() {
+
+//        val redRockBottomSheetDialog = RedRockBottomSheetDialog(BaseApp.context)
+//        redRockBottomSheetDialog.setContentView(findViewById<FrameLayout>(R.id.fm_detail))
+
+        val fm = supportFragmentManager
+        val transaction = fm.beginTransaction()
+        val detailFragment = DetailFragment()
+        transaction.replace(R.id.fm_detail, detailFragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }

@@ -30,7 +30,7 @@ object ApiGenerator {
     private val retrofitMap by lazy { SparseArray<Retrofit>() }
 
     //init对两种公共的retrofit进行配置
-    init {
+        init {
         //添加监听得到登录后的token和refreshToken,应用于初次登录或重新登录
         val accountService = ServiceManager.getService(IAccountService::class.java)
         accountService.getVerifyService().addOnStateChangedListener {

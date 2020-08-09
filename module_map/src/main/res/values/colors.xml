@@ -4,6 +4,7 @@
     //测试数据
     <color name="map_activity_background_color">#96ecbb</color>
     <color name="map_activity_search_history_color">#244780</color>
+    <color name="map_fragment_detail_name_color">#15305C</color>
 
 </resources>
 
