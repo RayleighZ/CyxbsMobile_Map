@@ -1,68 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:background="@drawable/map_back_bottom_sheet"
-    android:fitsSystemWindows="true">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel" />
+    </data>
 
-    <!--需要设置为可滚动-->
-
-    <TextView
-        android:id="@+id/tv_map_place_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="40dp"
-        android:focusable="true"
-        android:text="风雨操场"
-        android:textColor="@color/map_fragment_detail_name_color"
-        android:textSize="23sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/ll_map_icon_container"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_map_place_name" />
+        android:layout_height="466dp"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/map_back_bottom_sheet"
+        android:fitsSystemWindows="true">
 
-    <ImageView
-        android:id="@+id/map_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/map_ic_notify_can_pull" />
+        <!--需要设置为可滚动-->
 
-    <TextView
-        android:id="@+id/map_textview2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="113dp"
-        android:text="详情"
-        android:textColor="#778AA9"
-        android:textSize="14.99sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tv_map_place_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="40dp"
+            android:focusable="true"
+            android:text="@{viewModel.placeName , default = @string/map_detail_default_place_name}"
+            android:textColor="@color/map_fragment_detail_name_color"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.viewpager.widget.ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="158dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="146dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:id="@+id/ll_map_icon_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_map_place_name" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-    
+        <ImageView
+            android:id="@+id/map_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/map_ic_notify_can_pull" />
+
+        <TextView
+            android:id="@+id/map_textview2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="113dp"
+            android:text="@string/map_detail_detail"
+            android:textColor="#778AA9"
+            android:textSize="14.99sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/map_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="158dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="144dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_detail_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="395dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            app:chipSpacingVertical="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <ImageView
+            android:id="@+id/map_imageview2"
+            android:layout_width="19.5dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="56dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@mipmap/map_ic_stared" />
+
+        <TextView
+            android:id="@+id/map_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="114dp"
+            android:layout_marginEnd="28dp"
+            android:text="查看更多"
+            android:textColor="#ABBCD8"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/map_imageview5"
+            android:layout_width="5dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="115dp"
+            android:layout_marginEnd="15dp"
+            android:background="@mipmap/map_ic_more_detail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/map_imageview6"
+            android:layout_width="16.5dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="173dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/map_viewpager"
+            app:srcCompat="@mipmap/map_ic_share" />
+
+        <TextView
+            android:id="@+id/map_textview3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="13dp"
+            android:text="与大家分享你拍摄的此地点"
+            android:textColor="#234780"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@+id/map_imageview6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/map_imageview6" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -29,6 +30,8 @@ class MapActivity : BaseViewModelActivity<MapViewModel>() {
 
     override val isFragmentActivity = false
     override val viewModelClass = MapViewModel::class.java
+
+    private lateinit var detailFragment : DetailFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +112,7 @@ class MapActivity : BaseViewModelActivity<MapViewModel>() {
 
         val fm = supportFragmentManager
         val transaction = fm.beginTransaction()
-        val detailFragment = DetailFragment()
+        detailFragment = DetailFragment()
         transaction.replace(R.id.fm_detail, detailFragment)
         transaction.addToBackStack(null)
         transaction.commit()

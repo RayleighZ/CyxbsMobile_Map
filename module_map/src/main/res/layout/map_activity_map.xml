@@ -19,7 +19,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                android:paddingBottom="94dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -29,8 +28,10 @@
             <FrameLayout
                 android:id="@+id/fm_detail"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:behavior_peekHeight="127dp"
+                android:layout_height="466dp"
+                android:focusable="true"
+                android:clickable="true"
+                app:behavior_peekHeight="113dp"
                 app:layout_behavior="@string/bottom_sheet_behavior">
 
             </FrameLayout>

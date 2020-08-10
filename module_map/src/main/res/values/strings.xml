@@ -2,4 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="map_search_history">历史记录</string>
     <string name="map_search_delete_all">清除全部</string>
+    <string name="map_detail_detail">详情</string>
+    <string name="map_detail_default_place_name">风雨操场</string>
 </resources>
