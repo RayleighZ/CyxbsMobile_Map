@@ -3,7 +3,19 @@
 
     //测试数据
     <color name="map_activity_background_color">#96ecbb</color>
-    <color name="map_activity_search_history_color">#244780</color>
 
+    <color name="map_activity_search_history_text_color">#778AA9</color>
+    <color name="map_activity_search_history_item_text_color">#234780</color>
+    <color name="map_activity_search_history_clear_all_color">#ABBCD8</color>
+
+    <color name="map_activity_white_color">#FFFFFF</color>
+    <color name="map_activity_line_color">#F0F4FD</color>
+
+    <color name="map_activity_classify_name_color">#15305B</color>
+    <color name="map_activity_favorite_item_name_color">#253E65</color>
+    <color name="map_activity_favorite_item_horizontal_line_color">#E2E6EF</color>
+
+    <!--    打字框背景颜色-->
+    <color name="map_activity_search_background_shallow_color">#F0F4FD</color>
 </resources>
 

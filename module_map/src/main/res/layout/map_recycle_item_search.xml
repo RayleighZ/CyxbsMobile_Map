@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingStart="20dp"
+    android:paddingStart="15dp"
     android:paddingTop="10dp"
-    android:paddingEnd="20dp"
+    android:paddingEnd="15dp"
     android:paddingBottom="10dp">
 
-    <TextView
-        android:id="@+id/tv_map_item_search_name"
+    <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
+        android:id="@+id/tv_map_item_search_history_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:textColor="@color/levelFourFontColor"
+        android:layout_gravity="center_vertical|start"
+        android:textColor="@color/map_activity_search_history_item_text_color"
         android:textSize="17sp"
+        app:map_typeface="PFSCMTypeface"
         tools:text="中心食堂" />
 
     <ImageView
         android:id="@+id/iv_map_item_search_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
+        android:layout_gravity="center_vertical|end"
         android:src="@drawable/map_ic_delete" />
 
 </FrameLayout>

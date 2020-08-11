@@ -2,4 +2,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="map_search_history">历史记录</string>
     <string name="map_search_delete_all">清除全部</string>
+    <string name="map_my_favorite">我的收藏</string>
 </resources>
