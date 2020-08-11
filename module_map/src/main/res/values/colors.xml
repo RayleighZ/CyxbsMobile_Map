@@ -10,13 +10,15 @@
 
     <color name="map_activity_white_color">#FFFFFF</color>
     <color name="map_activity_line_color">#F0F4FD</color>
-
     <color name="map_activity_classify_name_color">#15305B</color>
     <color name="map_activity_favorite_item_name_color">#253E65</color>
     <color name="map_activity_favorite_item_horizontal_line_color">#E2E6EF</color>
 
+    <color name="map_activity_collect_charnum_color">#7E90A8</color>
+    <color name="map_activity_collect_uncollect_color">#01CAF0</color>
+    <color name="map_activity_collect_edit_back_color">#F1F6FD</color>
+    <!--详细信息  地点名称颜色-->
     <color name="map_fragment_detail_name_color">#15305C</color>
-
     <!--    打字框背景颜色-->
     <color name="map_activity_search_background_shallow_color">#F0F4FD</color>
 </resources>

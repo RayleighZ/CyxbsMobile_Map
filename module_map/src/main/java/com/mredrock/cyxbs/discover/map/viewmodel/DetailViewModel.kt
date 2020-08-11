@@ -1,6 +1,5 @@
 package com.mredrock.cyxbs.discover.map.viewmodel
 
-import android.content.Context
 import android.graphics.Color
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -12,7 +11,7 @@ import com.mredrock.cyxbs.common.viewmodel.BaseViewModel
 import com.mredrock.cyxbs.discover.map.view.widget.CycleTextView
 import org.jetbrains.anko.textColor
 import java.lang.ref.WeakReference
-import com.mredrock.cyxbs.discover.map.adapter.DetailViewPageAdapter
+import com.mredrock.cyxbs.discover.map.view.adapter.DetailViewPageAdapter
 
 /**
  * @date 2020-08-10

@@ -4,16 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.databinding.ObservableField
-import com.mredrock.cyxbs.common.BaseApp
-import com.mredrock.cyxbs.common.component.RedRockBottomSheetDialog
 import com.mredrock.cyxbs.common.ui.BaseViewModelFragment
 import com.mredrock.cyxbs.discover.map.R
-import com.mredrock.cyxbs.discover.map.adapter.DetailViewPageAdapter
+import com.mredrock.cyxbs.discover.map.view.activity.CollectActivity
+import com.mredrock.cyxbs.discover.map.view.adapter.DetailViewPageAdapter
 import com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel
 import kotlinx.android.synthetic.main.map_fragment_detail.*
-import org.jetbrains.anko.sdk27.coroutines.onTouch
 import java.lang.ref.WeakReference
 
 /**
@@ -46,6 +42,10 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         viewModel.setDetailPic(vpAdapter , listOf())
         tv_map_place_name.isSelected = true
         viewModel.placeName.set(placeName)
+
+        map_iv_start.setOnClickListener {
+            context?.let { it1 -> CollectActivity.actionStart(it1, 1) }
+        }
         //viewModel.setDetailPic(vpAdapter , listOf("https://bihu-head.oss-cn-chengdu.aliyuncs.com/Eva3.jpg" , "https://bihu-head.oss-cn-chengdu.aliyuncs.com/eva.png" , "瞎数据"))
     }
     fun setName(placeName : String){

@@ -4,9 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
-        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/map_activity_white_color"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        tools:context=".view.activity.MapActivity"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/view_status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:fitsSystemWindows="true"
@@ -21,13 +32,6 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 tools:context=".view.activity.MapActivity">
-
-                <View
-                    android:id="@+id/view_status_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/iv_map_back"
@@ -44,7 +48,6 @@
                     android:id="@+id/et_map_search"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:layout_marginEnd="15dp"
                     android:layout_marginBottom="6dp"
                     android:background="@drawable/map_shape_search_background"
@@ -57,7 +60,7 @@
                     app:layout_constraintBottom_toTopOf="@id/cl_map_favorite"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/iv_map_back"
-                    app:layout_constraintTop_toBottomOf="@id/view_status_bar"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:map_typeface="PFSCMTypeface"
                     tools:hint="大家都在搜：风雨操场" />
 
