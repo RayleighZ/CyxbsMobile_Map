@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="map_TypefaceTextView">
+        <attr name="map_typeface">
+            <enum name="PFSCHTypeface" value="1" />
+            <enum name="PFSCMTypeface" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

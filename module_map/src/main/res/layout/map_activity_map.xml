@@ -1,19 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.activity.MapActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-
-    <com.mredrock.cyxbs.discover.map.view.widget.PinView
-        
-        android:id="@+id/iv_map"
+    <FrameLayout
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:fitsSystemWindows="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".view.activity.MapActivity">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/map_activity_white_color"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                tools:context=".view.activity.MapActivity">
+
+                <View
+                    android:id="@+id/view_status_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_map_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:src="@drawable/common_back"
+                    app:layout_constraintBottom_toBottomOf="@id/et_map_search"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/et_map_search" />
+
+                <com.mredrock.cyxbs.discover.map.view.widget.TypefaceEditText
+                    android:id="@+id/et_map_search"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/map_shape_search_background"
+                    android:drawableStart="@drawable/map_ic_search"
+                    android:drawablePadding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@id/cl_map_favorite"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iv_map_back"
+                    app:layout_constraintTop_toBottomOf="@id/view_status_bar"
+                    app:map_typeface="PFSCMTypeface"
+                    tools:hint="大家都在搜：风雨操场" />
+
+                <ImageView
+                    android:id="@+id/iv_map_search_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="16dp"
+                    android:src="@drawable/map_ic_search_clear"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/et_map_search"
+                    app:layout_constraintEnd_toEndOf="@id/et_map_search"
+                    app:layout_constraintTop_toTopOf="@id/et_map_search" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_map_favorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="12dp"
+                    app:layout_constraintBottom_toTopOf="@id/iv_map"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_map_search">
+
+                    <ImageView
+                        android:id="@+id/iv_map_favorite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/map_ic_favorite"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
+                        android:id="@+id/tv_map_favorite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4.5dp"
+                        android:text="@string/map_my_favorite"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/iv_map_favorite"
+                        app:map_typeface="PFSCMTypeface" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/view_map_vertical_line"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:background="@color/map_activity_line_color"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_map_favorite"
+                    app:layout_constraintEnd_toStartOf="@id/cl_map_favorite"
+                    app:layout_constraintTop_toTopOf="@id/cl_map_favorite" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_map_classify"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:paddingStart="9dp"
+                    android:paddingEnd="9dp"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_map_favorite"
+                    app:layout_constraintEnd_toStartOf="@id/view_map_vertical_line"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/cl_map_favorite"
+                    tools:listitem="@layout/map_recycle_item_classify" />
+
+                <com.mredrock.cyxbs.discover.map.view.widget.PinView
+                    android:id="@+id/iv_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@color/map_activity_background_color"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cl_map_favorite" />
+
+                <ImageView
+                    android:id="@+id/iv_map_compass_char"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/map_ic_compass_char"
+                    app:layout_constraintEnd_toEndOf="@id/iv_map"
+                    app:layout_constraintTop_toTopOf="@id/iv_map" />
+
+                <ImageView
+                    android:id="@+id/iv_map_compass_picture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/map_ic_compass_picture"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_map_compass_char"
+                    app:layout_constraintEnd_toEndOf="@id/iv_map_compass_char"
+                    app:layout_constraintStart_toStartOf="@id/iv_map_compass_char"
+                    app:layout_constraintTop_toTopOf="@id/iv_map_compass_char" />
+
+                <ImageView
+                    android:id="@+id/iv_map_vr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/map_ic_vr"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_map_compass_char"
+                    app:layout_constraintStart_toStartOf="@id/iv_map"
+                    app:layout_constraintTop_toTopOf="@id/iv_map_compass_char" />
+
+                <LinearLayout
+                    android:id="@+id/ll_map_search_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/cl_map_favorite"
+                    tools:visibility="gone" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--此处是详情页fragment的容器-->
+            <FrameLayout
+                android:id="@+id/fm_detail"
+                android:layout_width="match_parent"
+                android:layout_height="466dp"
+                android:focusable="true"
+                android:clickable="true"
+                app:behavior_peekHeight="113dp"
+                app:layout_behavior="@string/bottom_sheet_behavior">
+
+            </FrameLayout>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </FrameLayout>
+
+</layout>

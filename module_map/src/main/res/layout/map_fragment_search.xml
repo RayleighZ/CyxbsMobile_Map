@@ -4,31 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/map_activity_white_color"
     tools:context=".view.fragment.SearchFragment">
 
-    <TextView
+    <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
         android:id="@+id/tv_map_search_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
+        android:layout_marginStart="15dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:text="@string/map_search_history"
-        android:textColor="@color/levelFourFontColor"
+        android:textColor="@color/map_activity_search_history_text_color"
+        android:textSize="15sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:map_typeface="PFSCMTypeface" />
 
-    <TextView
+    <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
         android:id="@+id/tv_map_search_delete_all"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="10dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="center"
         android:text="@string/map_search_delete_all"
-        android:textColor="@color/levelFourFontColor"
+        android:textColor="@color/map_activity_search_history_clear_all_color"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_map_search_history"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:map_typeface="PFSCMTypeface" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_map_search"
