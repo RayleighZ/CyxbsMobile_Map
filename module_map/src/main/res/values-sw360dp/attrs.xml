@@ -6,4 +6,9 @@
             <enum name="PFSCMTypeface" value="2" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="map_MaxHeightRecyclerView">
+        <attr name="map_maxHeight" format="dimension" />
+    </declare-styleable>
+
 </resources>

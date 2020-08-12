@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.component.CyxbsToast
+import com.mredrock.cyxbs.common.utils.extensions.invisible
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
 import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
@@ -31,15 +32,27 @@ class FavoriteAdapter(
         val item = dataList[position]
 
         if (holder is FavoriteViewHolder) {
-            holder.tvName.text = item.name
+            holder.tvName.text = item.placeNickname
+
+            if (position == 0) {
+                holder.tvName.setPadding(holder.tvName.paddingStart, 0,
+                        holder.tvName.paddingEnd, holder.tvName.paddingBottom)
+            }
+
+            if (position == dataList.size - 1) {
+                holder.viewHorizontalLine.invisible()
+                holder.tvName.setPadding(holder.tvName.paddingStart, holder.tvName.paddingTop,
+                        holder.tvName.paddingEnd, 0)
+            }
 
             holder.itemView.setOnClickListener {
-                CyxbsToast.makeText(BaseApp.context, "点击：${item.name}", Toast.LENGTH_SHORT)
+                CyxbsToast.makeText(BaseApp.context, "点击：${item.placeNickname}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     inner class FavoriteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvName: TextView = view.findViewById(R.id.tv_map_favorite_item_name)
+        val viewHorizontalLine: View = view.findViewById(R.id.view_map_favorite_item_horizontal_line)
     }
 }

@@ -4,4 +4,5 @@ import com.mredrock.cyxbs.discover.map.bean.Place
 
 object PlaceData {
     var placeList: MutableList<Place> = ArrayList()
+    var searchHistoryList: MutableList<Place> = ArrayList()
 }

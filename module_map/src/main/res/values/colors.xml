@@ -13,6 +13,7 @@
     <color name="map_activity_classify_name_color">#15305B</color>
     <color name="map_activity_favorite_item_name_color">#253E65</color>
     <color name="map_activity_favorite_item_horizontal_line_color">#E2E6EF</color>
+    <color name="map_activity_favorite_item_scroll_bar_color">#47DAFA</color>
 
     <color name="map_activity_collect_charnum_color">#7E90A8</color>
     <color name="map_activity_collect_uncollect_color">#01CAF0</color>
