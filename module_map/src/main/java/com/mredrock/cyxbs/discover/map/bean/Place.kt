@@ -53,7 +53,7 @@ class Place : Serializable {
     }
 }
 
-class PlaceInfo : Serializable {
+class PlaceDetail : Serializable {
     @SerializedName("place_name")
     var placeName: String? = null
 

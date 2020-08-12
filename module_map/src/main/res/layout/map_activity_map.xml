@@ -45,9 +45,11 @@
                 android:background="@drawable/map_shape_search_background"
                 android:drawableStart="@drawable/map_ic_search"
                 android:drawablePadding="8dp"
+                android:maxLines="1"
                 android:paddingStart="12dp"
                 android:paddingTop="9dp"
                 android:paddingBottom="9dp"
+                android:singleLine="true"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -104,6 +106,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4.5dp"
                     android:text="@string/map_my_favorite"
+                    android:textColor="@color/map_activity_favorite_name_color"
+                    android:textSize="11sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_map_favorite"
@@ -171,27 +175,30 @@
                 app:layout_constraintStart_toStartOf="@id/iv_map"
                 app:layout_constraintTop_toTopOf="@id/iv_map_compass_char" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/coordinatorLayout_map_activity"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            tools:context=".view.activity.MapActivity">
-
-            <!--此处是详情页fragment的容器-->
-            <FrameLayout
-                android:id="@+id/fm_detail"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/coordinatorLayout_map_activity"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                app:layout_behavior="@string/bottom_sheet_behavior">
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                tools:context=".view.activity.MapActivity"
+                tools:layout_editor_absoluteX="-1dp"
+                tools:layout_editor_absoluteY="-59dp"
+                tools:visibility="gone">
 
-            </FrameLayout>
+                <!--此处是详情页fragment的容器-->
+                <FrameLayout
+                    android:id="@+id/fm_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:layout_behavior="@string/bottom_sheet_behavior">
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                </FrameLayout>
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/ll_map_search_container"

@@ -2,6 +2,7 @@ package com.mredrock.cyxbs.discover.map.view.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Point
@@ -15,8 +16,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -26,12 +29,16 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnImageEven
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.component.CyxbsToast
+import com.mredrock.cyxbs.common.service.ServiceManager
+import com.mredrock.cyxbs.common.service.account.IAccountService
 import com.mredrock.cyxbs.common.ui.BaseActivity
 import com.mredrock.cyxbs.common.utils.extensions.dp2px
 import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.gone
 import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
+import com.mredrock.cyxbs.discover.map.bean.BasicMapData
+import com.mredrock.cyxbs.discover.map.bean.ClassifyData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
 import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
 import com.mredrock.cyxbs.discover.map.bean.Place
@@ -41,14 +48,17 @@ import com.mredrock.cyxbs.discover.map.view.adapter.ClassifyAdapter
 import com.mredrock.cyxbs.discover.map.view.adapter.FavoriteAdapter
 import com.mredrock.cyxbs.discover.map.view.fragment.DetailFragment
 import com.mredrock.cyxbs.discover.map.view.fragment.SearchFragment
+import com.mredrock.cyxbs.discover.map.viewmodel.MapViewModel
 import kotlinx.android.synthetic.main.map_activity_map.*
 import kotlinx.android.synthetic.main.map_fragment_search.*
 import kotlinx.android.synthetic.main.map_pop_window_no_favorite.view.*
+import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class MapActivity : BaseActivity() {
+    private val viewModel by lazy { ViewModelProvider(this).get(MapViewModel::class.java) }
     private lateinit var popWindow: PopupWindow
     private val classifyItemList: MutableList<ClassifyPlace> = ArrayList()
     private val favoriteItemList: MutableList<FavoritePlace> = ArrayList()
@@ -74,6 +84,14 @@ class MapActivity : BaseActivity() {
 
         setContentView(R.layout.map_activity_map)
 
+        val userState = ServiceManager.getService(IAccountService::class.java).getVerifyService()
+        if (!userState.isLogin()) {
+            //这里只是模拟一下登录，如果有并发需求，自己设计
+            Thread {
+                userState.login(this, "2019213962", "062115")
+            }.start()
+        }
+
         //初始化状态栏高度的透明View
         val statusBarLinearParams = view_status_bar.layoutParams //取控件当前的布局参数
         statusBarLinearParams.height = getStatusBarHeight() //状态栏高度
@@ -90,39 +108,12 @@ class MapActivity : BaseActivity() {
         popWindow.setBackgroundDrawable(getDrawable(android.R.color.transparent))//透明背景
         popWindow.isOutsideTouchable = true
         popWindow.isFocusable = true
+        popWindow.animationStyle = R.style.PopWindow_Anim_Style
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
         rv_map_classify.layoutManager = layoutManager
         rv_map_classify.adapter = classifyAdapter
-
-        //test data
-        val classifyPlace = ClassifyPlace()
-        classifyPlace.isHot = false
-        classifyPlace.title = "食堂"
-        classifyItemList.add(classifyPlace)
-
-        val classifyPlace2 = ClassifyPlace()
-        classifyPlace2.isHot = true
-        classifyPlace2.title = "入校报到点"
-        classifyItemList.add(classifyPlace2)
-
-        val classifyPlace3 = ClassifyPlace()
-        classifyPlace3.isHot = false
-        classifyPlace3.title = "运动场"
-        classifyItemList.add(classifyPlace3)
-
-        val classifyPlace4 = ClassifyPlace()
-        classifyPlace4.isHot = false
-        classifyPlace4.title = "入校报到点444444444"
-        classifyItemList.add(classifyPlace4)
-
-        val classifyPlace5 = ClassifyPlace()
-        classifyPlace5.isHot = true
-        classifyPlace5.title = "运动场5555555555"
-        classifyItemList.add(classifyPlace5)
-
-        classifyAdapter.notifyDataSetChanged()
 
         //test data
         val favoritePlace = FavoritePlace()
@@ -147,52 +138,6 @@ class MapActivity : BaseActivity() {
         favoriteItemList.add(favoritePlace4)
         favoriteItemList.add(favoritePlace4)
         favoriteItemList.clear()
-
-        et_map_search.hint = "大家都在搜：风雨操场"
-
-        iv_map.setOnImageEventListener(object : OnImageEventListener {
-            override fun onImageLoaded() {
-            }
-
-            override fun onReady() {
-                pinAndZoomIn(338f, 7970f)     //随机地点测试数据
-                pinAndZoomIn(6570f, 8710f)    //随机地点测试数据
-                pinAndZoomIn(1558f, 8714f)    //大门测试数据
-
-                //地点测试数据
-                val place = Place()
-                val buildingRect = Place.BuildingRect()
-                buildingRect.buildingTop = 7662f
-                buildingRect.buildingLeft = 3452f
-                buildingRect.buildingBottom = 7893f
-                buildingRect.buildingRight = 3812f
-                place.placeName = "老图书馆"
-                place.buildingRectList = ArrayList()
-                place.buildingRectList?.add(buildingRect)
-                place.tagTop = 7884f
-                place.tagLeft = 3335f
-                place.tagBottom = 7956f
-                place.tagRight = 3569f
-                place.placeCenterX = 3644f
-                place.placeCenterY = 7800f
-
-                PlaceData.placeList.clear()
-                PlaceData.placeList.add(place)
-            }
-
-            override fun onTileLoadError(e: Exception?) {
-            }
-
-            override fun onPreviewReleased() {
-            }
-
-            override fun onImageLoadError(e: Exception?) {
-            }
-
-            override fun onPreviewLoadError(e: Exception?) {
-            }
-
-        })
 
         iv_map.setImage(ImageSource.resource(R.drawable.map_ic_map))
 
@@ -299,6 +244,119 @@ class MapActivity : BaseActivity() {
             //收起键盘
             hideKeyBoard()
         }
+
+        initObserver()
+
+        viewModel.getBasicMapData()
+        viewModel.getClassify()
+    }
+
+    private fun initObserver() {
+        viewModel.mClassify.observe(this, Observer<ClassifyData> {
+            it.buttonInfo?.run {
+                classifyItemList.clear()
+                classifyItemList.addAll(this)
+                classifyAdapter.notifyDataSetChanged()
+            }
+        })
+
+        viewModel.mHot.observe(this, Observer<String> {
+            it.run {
+                if (this != null && this != "") {
+                    val text = this@MapActivity.getString(R.string.map_search_hot) + this
+                    this@MapActivity.et_map_search.hint = text
+                } else {
+                    val text = this@MapActivity.getString(R.string.map_search_hot) + "风雨操场"
+                    this@MapActivity.et_map_search.hint = text
+                }
+            }
+        })
+
+        viewModel.mBasicMapData.observe(this, Observer<BasicMapData> {
+            it?.run {
+                if (hotWord != null && hotWord != "") {
+                    val text = this@MapActivity.getString(R.string.map_search_hot) + hotWord
+                    this@MapActivity.et_map_search.hint = text
+                } else {
+                    this@MapActivity.viewModel.getHot()
+                }
+                placeList?.let { it1 ->
+                    PlaceData.placeList.addAll(it1)
+                }
+                PlaceData.mapData.mapBackgroundColor = mapBackgroundColor
+                PlaceData.mapData.mapHeight = mapHeight
+                PlaceData.mapData.mapWidth = mapWidth
+                PlaceData.mapData.mapUrl = mapUrl
+                PlaceData.mapData.zoomInId = zoomInId
+
+                //测试数据
+                val place = Place()
+                val buildingRect = Place.BuildingRect()
+                buildingRect.buildingTop = 7662f
+                buildingRect.buildingLeft = 3452f
+                buildingRect.buildingBottom = 7893f
+                buildingRect.buildingRight = 3812f
+                place.placeName = "老图书馆"
+                place.buildingRectList = ArrayList()
+                place.buildingRectList?.add(buildingRect)
+                place.tagTop = 7884f
+                place.tagLeft = 3335f
+                place.tagBottom = 7956f
+                place.tagRight = 3569f
+                place.placeCenterX = 3644f
+                place.placeCenterY = 7800f
+
+                PlaceData.placeList.add(place)
+
+                for (i: Int in PlaceData.placeList.indices) {
+                    if (PlaceData.placeList[i].placeId == zoomInId) {
+                        iv_map.setOnImageEventListener(object : OnImageEventListener {
+                            override fun onImageLoaded() {
+                            }
+
+                            override fun onReady() {
+                                pinAndZoomIn(1558f, 8714f)    //大门测试数据
+//                                pinAndZoomIn(PlaceData.placeList[i].placeCenterX, PlaceData.placeList[i].placeCenterY)
+
+//                                    //地点测试数据
+//                                    val place = Place()
+//                                    val buildingRect = Place.BuildingRect()
+//                                    buildingRect.buildingTop = 7662f
+//                                    buildingRect.buildingLeft = 3452f
+//                                    buildingRect.buildingBottom = 7893f
+//                                    buildingRect.buildingRight = 3812f
+//                                    place.placeName = "老图书馆"
+//                                    place.buildingRectList = ArrayList()
+//                                    place.buildingRectList?.add(buildingRect)
+//                                    place.tagTop = 7884f
+//                                    place.tagLeft = 3335f
+//                                    place.tagBottom = 7956f
+//                                    place.tagRight = 3569f
+//                                    place.placeCenterX = 3644f
+//                                    place.placeCenterY = 7800f
+//
+//                                    PlaceData.placeList.clear()
+//                                    PlaceData.placeList.add(place)
+                            }
+
+                            override fun onTileLoadError(e: Exception?) {
+                            }
+
+                            override fun onPreviewReleased() {
+                            }
+
+                            override fun onImageLoadError(e: Exception?) {
+                            }
+
+                            override fun onPreviewLoadError(e: Exception?) {
+                            }
+
+                        })
+                        break
+                    }
+                }
+            }
+        })
     }
 
     fun pinAndZoomIn(x: Float, y: Float) {
@@ -422,11 +480,6 @@ class MapActivity : BaseActivity() {
         transaction.replace(R.id.fm_detail, detailFragment)
         transaction.addToBackStack("detailFragment")
         transaction.commitAllowingStateLoss()
-    }
-
-    fun changeSearchText(s: String?) {
-        et_map_search.setText(s)
-        et_map_search.setSelection(s?.length ?: 0)
     }
 
     private fun detailFragmentScrollToBottom() {

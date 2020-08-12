@@ -138,7 +138,7 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                     }
                     PlaceData.placeList[i].buildingRectList?.run {
                         for (j: Int in indices) {
-                            val buildingRect = place.buildingRectList?.get(i)
+                            val buildingRect = place.buildingRectList?.get(j)
                             buildingRect?.let {
                                 if (x >= it.buildingLeft && x <= it.buildingRight &&
                                         y >= it.buildingTop && y <= it.buildingBottom) {

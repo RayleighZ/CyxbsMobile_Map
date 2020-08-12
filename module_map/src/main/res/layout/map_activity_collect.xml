@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout>
+
     <data>
+
         <variable
             name="viewModel"
             type="com.mredrock.cyxbs.discover.map.viewmodel.CollectViewModel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -14,7 +17,14 @@
         android:background="@color/cardview_light_background"
         tools:context=".view.activity.CollectActivity">
 
-        <TextView
+        <View
+            android:id="@+id/view_map_collect_status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_textview4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,9 +32,9 @@
             android:layout_marginTop="72dp"
             android:textColor="@color/map_fragment_detail_name_color"
             android:textSize="23sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_map_collect_status_bar"
+            app:map_typeface="PFSCHTypeface"
             tools:text="@{viewModel.placeName}" />
 
         <LinearLayout
@@ -34,9 +44,9 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="@+id/map_textview4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/map_textview4"/>
+            app:layout_constraintTop_toTopOf="@+id/map_textview4" />
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_textview5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,9 +55,10 @@
             android:text="取消"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/view_map_collect_status_bar"
+            app:map_typeface="PFSCBTypeface" />
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_textview6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,9 +68,10 @@
             android:textColor="@color/map_activity_search_history_item_text_color"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/view_map_collect_status_bar"
+            app:map_typeface="PFSCBTypeface" />
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_textview7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,7 +81,8 @@
             android:textColor="@color/map_activity_search_history_item_text_color"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map_textview4" />
+            app:layout_constraintTop_toBottomOf="@+id/map_textview4"
+            app:map_typeface="PFSCMTypeface" />
 
         <EditText
             android:id="@+id/map_edittext"
@@ -87,6 +100,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/map_textview7"
+            app:map_typeface="PFSCMTypeface"
             tools:ignore="RtlSymmetry" />
 
         <TextView
@@ -101,16 +115,19 @@
             app:layout_constraintEnd_toEndOf="@+id/map_edittext"
             app:layout_constraintTop_toTopOf="@+id/map_edittext" />
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_textview9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:text="推荐"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@+id/map_edittext"
-            app:layout_constraintTop_toBottomOf="@+id/map_edittext" />
+            app:layout_constraintTop_toBottomOf="@+id/map_edittext"
+            app:map_typeface="PFSCMTypeface" />
 
         <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup_map_recommend_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
@@ -122,17 +139,18 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_textview10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="338dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="15dp"
             android:text="不再收藏该地点"
             android:textColor="@color/map_activity_collect_uncollect_color"
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/chipGroup_map_recommend_name"
+            app:map_typeface="PFSCBTypeface" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

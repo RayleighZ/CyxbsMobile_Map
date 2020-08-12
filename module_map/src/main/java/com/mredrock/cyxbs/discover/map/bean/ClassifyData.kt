@@ -8,7 +8,7 @@ import java.io.Serializable
  */
 class ClassifyData : Serializable {
     @SerializedName("button_info")
-    var buttonInfo: MutableList<ClassifyPlace>? = null
+    var buttonInfo: List<ClassifyPlace>? = null
 
     class ClassifyPlace : Serializable {
         @SerializedName("title")

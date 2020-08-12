@@ -13,7 +13,6 @@ import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
 import com.mredrock.cyxbs.discover.map.view.adapter.SearchAdapter
-import kotlinx.android.synthetic.main.map_activity_map.*
 import kotlinx.android.synthetic.main.map_fragment_search.*
 
 class SearchFragment : BaseFragment() {
@@ -29,9 +28,9 @@ class SearchFragment : BaseFragment() {
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return if (enter) {
-            AnimationUtils.loadAnimation(activity, R.anim.anl_push_top_in)
+            AnimationUtils.loadAnimation(activity, R.anim.map_anl_push_top_in)
         } else {
-            AnimationUtils.loadAnimation(activity, R.anim.anl_push_top_out)
+            AnimationUtils.loadAnimation(activity, R.anim.map_anl_push_top_out)
         }
     }
 

@@ -4,19 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.ui.BaseViewModelFragment
-import com.mredrock.cyxbs.common.utils.extensions.dp2px
 import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.invisible
 import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
+import com.mredrock.cyxbs.discover.map.util.MapAlertDialogUtil
+import com.mredrock.cyxbs.discover.map.util.MapAlertDialogUtil.setOnClickListener
 import com.mredrock.cyxbs.discover.map.view.activity.CollectActivity
 import com.mredrock.cyxbs.discover.map.view.adapter.DetailViewPageAdapter
 import com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel
@@ -76,6 +76,16 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         }
 
         //viewModel.setDetailPic(vpAdapter , listOf("https://bihu-head.oss-cn-chengdu.aliyuncs.com/Eva3.jpg" , "https://bihu-head.oss-cn-chengdu.aliyuncs.com/eva.png" , "瞎数据"))
+
+        map_textview3.setOnClickListener {
+            context?.let {
+                val dialog: AlertDialog = MapAlertDialogUtil.getMapAlertDialog(it, getString(R.string.map_alert_dialog_share_photo_title),
+                        getString(R.string.map_alert_dialog_share_photo_content))
+                dialog.setOnClickListener(View.OnClickListener {
+                    dialog.cancel()
+                }).show()
+            }
+        }
     }
 
     fun setName(placeName: String) {

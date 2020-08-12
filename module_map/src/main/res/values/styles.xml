@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme.TranslucentStatus" tools:ignore="ResourceName">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="PopWindow_Anim_Style" tools:ignore="ResourceName">
+        <item name="android:windowEnterAnimation">@anim/map_anl_show</item>
+        <item name="android:windowExitAnimation">@anim/map_anl_hide</item>
+    </style>
+</resources>
