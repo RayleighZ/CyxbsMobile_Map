@@ -53,6 +53,17 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         return mView
     }
 
+    fun refresh(id: Int) {
+        placeId = id
+        if (placeId != -1) {
+            for (i: Int in PlaceData.placeList.indices) {
+                if (PlaceData.placeList[i].placeId == placeId) {
+                    viewModel.placeName.set(PlaceData.placeList[i].placeName)
+                }
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.setIcon(WeakReference(view.findViewById(R.id.ll_map_icon_container)), listOf("操场", "活动中心"))

@@ -65,7 +65,7 @@ class MapActivity : BaseActivity() {
     private val classifyAdapter: ClassifyAdapter = ClassifyAdapter(this, classifyItemList)
     private val favoriteAdapter: FavoriteAdapter = FavoriteAdapter(this, favoriteItemList)
     private var searchFragmentIsShowing: Boolean = false        //判断搜索fragment是否显示
-    private lateinit var detailFragment: DetailFragment
+    private var detailFragment: DetailFragment? = null
     var searchFragment: SearchFragment? = null
 
     override val isFragmentActivity = false
@@ -96,6 +96,8 @@ class MapActivity : BaseActivity() {
         val statusBarLinearParams = view_status_bar.layoutParams //取控件当前的布局参数
         statusBarLinearParams.height = getStatusBarHeight() //状态栏高度
         view_status_bar.layoutParams = statusBarLinearParams
+
+        iv_map.setMaximumDpi(10)
 
         //初始化我的收藏弹出菜单
         val popWindowView: View = LayoutInflater.from(this).inflate(R.layout.map_pop_window_no_favorite, null)
@@ -204,6 +206,17 @@ class MapActivity : BaseActivity() {
                     if (this) {
                         iv_map_search_clear.visibility = View.GONE
 
+                        //恢复边距
+                        this@MapActivity.et_map_search.post {
+                            this@MapActivity.iv_map_search_clear.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                            this@MapActivity.et_map_search.setPadding(
+                                    this@MapActivity.et_map_search.paddingLeft,
+                                    this@MapActivity.et_map_search.paddingTop,
+                                    this@MapActivity.et_map_search.paddingLeft,
+                                    this@MapActivity.et_map_search.paddingBottom
+                            )
+                        }
+
                         searchFragment?.run {
                             searchResultList.clear()
                             changeAdapter(1)
@@ -213,6 +226,17 @@ class MapActivity : BaseActivity() {
                         }
                     } else {
                         var isFind = false
+
+                        //避免输入的字与右侧叉号重叠
+                        this@MapActivity.et_map_search.post {
+                            this@MapActivity.iv_map_search_clear.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                            this@MapActivity.et_map_search.setPadding(
+                                    this@MapActivity.et_map_search.paddingLeft,
+                                    this@MapActivity.et_map_search.paddingTop,
+                                    this@MapActivity.iv_map_search_clear.measuredWidth,
+                                    this@MapActivity.et_map_search.paddingBottom
+                            )
+                        }
                         searchFragment?.let {
                             it.changeAdapter(0)
                             it.tv_map_search_history?.gone()
@@ -300,30 +324,10 @@ class MapActivity : BaseActivity() {
                             }
 
                             override fun onReady() {
-//                                pinAndZoomIn(1558f, 8714f)    //大门测试数据
+//                                pinAndZoomIn(1558f, 8714f, 1)    //大门测试数据
                                 pinAndZoomIn(PlaceData.placeList[i].placeCenterX,
                                         PlaceData.placeList[i].placeCenterY,
                                         PlaceData.placeList[i].placeId)
-
-//                                    //地点测试数据
-//                                    val place = Place()
-//                                    val buildingRect = Place.BuildingRect()
-//                                    buildingRect.buildingTop = 7662f
-//                                    buildingRect.buildingLeft = 3452f
-//                                    buildingRect.buildingBottom = 7893f
-//                                    buildingRect.buildingRight = 3812f
-//                                    place.placeName = "老图书馆"
-//                                    place.buildingRectList = ArrayList()
-//                                    place.buildingRectList?.add(buildingRect)
-//                                    place.tagTop = 7884f
-//                                    place.tagLeft = 3335f
-//                                    place.tagBottom = 7956f
-//                                    place.tagRight = 3569f
-//                                    place.placeCenterX = 3644f
-//                                    place.placeCenterY = 7800f
-//
-//                                    PlaceData.placeList.clear()
-//                                    PlaceData.placeList.add(place)
                             }
 
                             override fun onTileLoadError(e: Exception?) {
@@ -359,10 +363,21 @@ class MapActivity : BaseActivity() {
             pin = Bitmap.createScaledBitmap(pin, w.toInt(), h.toInt(), true)
             iv_map.addPin(pin, center)
             val animationBuilder: AnimationBuilder? = iv_map.animateScaleAndCenter(scale, center)
-            animationBuilder?.withDuration(1000)?.withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)?.withInterruptible(false)?.start()
-            loadDetailFragment(placeId)
-//
-//            //TODO:在MVVM的Model里进行数据库操作
+            animationBuilder?.withOnAnimationEventListener(object : SubsamplingScaleImageView.OnAnimationEventListener {
+                override fun onComplete() {
+                    loadDetailFragment(placeId)
+                }
+
+                override fun onInterruptedByUser() {
+                }
+
+                override fun onInterruptedByNewAnim() {
+                }
+
+            })
+            animationBuilder?.withDuration(700)?.withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)?.withInterruptible(false)?.start()
+
+            //TODO:在MVVM的Model里进行数据库操作
             Thread(Runnable {
                 val placeArray = PlaceDatabase.getDataBase(this@MapActivity)
                         .getPlaceDao().queryAllPlaces()
@@ -391,6 +406,7 @@ class MapActivity : BaseActivity() {
                     detailFragmentScroll(BottomSheetBehavior.STATE_COLLAPSED)
                 } else {
                     supportFragmentManager.popBackStack("detailFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    detailFragment = null
                 }
             }
         } else {
@@ -465,13 +481,19 @@ class MapActivity : BaseActivity() {
 //        val redRockBottomSheetDialog = RedRockBottomSheetDialog(BaseApp.context)
 //        val view = View.inflate(this, R.layout.map_fragment_detail, null)
 //        redRockBottomSheetDialog.setContentView(view)
-        val fm = supportFragmentManager
-        val transaction = fm.beginTransaction()
         DetailFragment.placeId = placeId
-        detailFragment = DetailFragment()
-        transaction.replace(R.id.fm_detail, detailFragment)
-                .addToBackStack("detailFragment")
-                .commitAllowingStateLoss()
+        //进一步优化，此处不每一次都产生一次对象，而是地点改变时传递新的id
+        if (detailFragment == null) {
+            val transaction = supportFragmentManager.beginTransaction()
+            detailFragment = DetailFragment()
+            detailFragment?.let {
+                transaction.replace(R.id.fm_detail, it)
+                        .addToBackStack("detailFragment")
+                        .commitAllowingStateLoss()
+            }
+        } else {
+            detailFragment?.refresh(placeId)
+        }
     }
 
     private fun detailFragmentScroll(state: Int) {

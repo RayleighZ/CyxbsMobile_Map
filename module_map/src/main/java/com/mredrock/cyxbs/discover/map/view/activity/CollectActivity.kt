@@ -62,7 +62,7 @@ class CollectActivity : BaseViewModelActivity<CollectViewModel>() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (this@CollectActivity.map_edittext.selectionEnd == start) {
+                if (this@CollectActivity.map_edittext.selectionEnd == start && count > 0) {
                     this@CollectActivity.map_edittext.setSelection(this@CollectActivity.map_edittext.text.length)
                 }
             }

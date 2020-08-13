@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.NinePatchDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
@@ -14,6 +15,7 @@ import android.widget.Toast
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.component.CyxbsToast
+import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
@@ -27,6 +29,8 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
     private var pinPositionList: MutableList<PointF> = ArrayList()
     private var sPinList: MutableList<PointF> = ArrayList()
     private var sPinSize = PointF()
+
+    private var lastPlace: Place? = null
 
     //    private var pinList: MutableList<ImageView> = ArrayList()
     private var pinBitmapList: MutableList<Bitmap> = ArrayList()
@@ -124,12 +128,31 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                 val x: Float = (sCoord?.x ?: 0f)
                 val y: Float = (sCoord?.y ?: 0f)
                 var isFind = false
+                lastPlace?.let {
+                    if (x >= it.tagLeft && x <= it.tagRight &&
+                            y >= it.tagTop && y <= it.tagBottom) {
+                        return true
+                    }
+
+                    it.buildingRectList?.indices?.let { it1 ->
+                        for (i: Int in it1) {
+                            it.buildingRectList?.get(i)?.run {
+                                if (x in buildingLeft..buildingRight &&
+                                        y >= buildingTop && y <= buildingBottom) {
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+
                 out@ for (i: Int in PlaceData.placeList.indices) {
                     val place = PlaceData.placeList[i]
                     if (x >= place.tagLeft && x <= place.tagRight &&
                             y >= place.tagTop && y <= place.tagBottom) {
                         context?.run {
                             if (this is MapActivity) {
+                                lastPlace = place
                                 this.removeAllPin()
                                 this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX,
                                         PlaceData.placeList[i].placeCenterY,
@@ -146,6 +169,7 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                                         y >= it.buildingTop && y <= it.buildingBottom) {
                                     context?.run {
                                         if (this is MapActivity) {
+                                            lastPlace = place
                                             this.removeAllPin()
                                             this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX,
                                                     PlaceData.placeList[i].placeCenterY,
