@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/map_activity_white_color"
+    tools:context=".view.activity.ShowAllPicActivity">
+
+    <View
+        android:id="@+id/view_map_allpic_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
+        android:id="@+id/map_typefacetextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="64dp"
+        android:text="@string/map_activity_all_photo_title"
+        android:textColor="@color/map_alert_dialog_title_color"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/view_map_allpic_status_bar"
+        app:map_typeface="PFSCHTypeface" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_map_allpic_show_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="105.5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map_typefacetextview" />
+
+    <Button
+        android:id="@+id/bt_map_allpic_back"
+        android:layout_width="7.5dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="14.5dp"
+        android:background="@drawable/map_ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/view_map_allpic_status_bar" />
+
+    <ImageView
+        android:id="@+id/iv_map_allpic_share"
+        android:layout_width="16.5dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_map_allpic_share"
+        app:layout_constraintEnd_toStartOf="@+id/tv_map_allpic_share"
+        app:layout_constraintTop_toTopOf="@+id/tv_map_allpic_share"
+        app:srcCompat="@mipmap/map_ic_share_higlight" />
+
+    <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
+        android:id="@+id/tv_map_allpic_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/map_activity_showpic_sharewords"
+        android:textColor="@color/map_activity_showpic_share_words_hight_blue"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/view_map_allpic_status_bar"
+        app:map_typeface="PFSCHTypeface" />
+
+    <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
+        android:id="@+id/tv_map_allpic_no_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="17dp"
+        android:text="@string/map_activity_allpic_no_more_pic"
+        android:textColor="@color/map_activity_search_history_clear_all_color"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:map_typeface="PFSCHTypeface" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

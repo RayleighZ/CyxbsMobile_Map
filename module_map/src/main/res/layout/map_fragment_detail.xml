@@ -2,17 +2,17 @@
 <layout>
 
     <data>
+
         <variable
             name="viewModel"
             type="com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="466dp"
+        android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:background="@drawable/map_layer_list_back_bottom_sheet"
         android:fitsSystemWindows="true">
@@ -25,11 +25,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="40dp"
-            android:singleLine="true"
-            android:maxEms="8"
-            android:focusable="true"
             android:ellipsize="marquee"
+            android:focusable="true"
             android:marqueeRepeatLimit="marquee_forever"
+            android:maxEms="8"
+            android:singleLine="true"
             android:text="@{viewModel.placeName , default = @string/map_detail_default_place_name}"
             android:textColor="@color/map_fragment_detail_name_color"
             android:textSize="23sp"
@@ -43,6 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="8dp"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_map_place_name" />
 
@@ -61,92 +62,106 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="113dp"
+            android:layout_marginTop="24dp"
             android:text="@string/map_detail_detail"
             android:textColor="#778AA9"
             android:textSize="14.99sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/ll_map_icon_container" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/map_viewpager"
             android:layout_width="match_parent"
             android:layout_height="158dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="144dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/map_textview2" />
+
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
+            android:id="@+id/tv_map_about_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/map_detail_about_place"
+            android:textColor="@color/map_activity_favorite_name_color"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/map_tv_share_photo"
+            app:map_typeface="PFSCMTypeface" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group_detail_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="395dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            app:chipSpacingVertical="8dp"
+            app:chipSpacingHorizontal="12dp"
+            app:chipSpacingVertical="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/tv_map_about_place">
 
         </com.google.android.material.chip.ChipGroup>
 
         <ImageView
             android:id="@+id/map_iv_start"
-            android:layout_width="19.5dp"
-            android:layout_height="18dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="56dp"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/map_ic_stared" />
+            app:srcCompat="@drawable/map_ic_stared" />
 
         <TextView
-            android:id="@+id/map_textview"
+            android:id="@+id/map_tv_show_maore_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="114dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginEnd="8dp"
             android:text="查看更多"
             android:textColor="#ABBCD8"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/map_textview2"
+            app:layout_constraintEnd_toStartOf="@id/map_imageview5"
+            app:layout_constraintTop_toTopOf="@id/map_textview2" />
 
         <ImageView
             android:id="@+id/map_imageview5"
-            android:layout_width="5dp"
-            android:layout_height="15dp"
-            android:layout_marginTop="115dp"
-            android:layout_marginEnd="15dp"
-            android:background="@mipmap/map_ic_more_detail"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/map_imageview6"
-            android:layout_width="16.5dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="173dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map_viewpager"
-            app:srcCompat="@mipmap/map_ic_share" />
-
-        <TextView
-            android:id="@+id/map_textview3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="13dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/map_ic_more_detail"
+            app:layout_constraintBottom_toBottomOf="@id/map_textview2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/map_textview2" />
+
+        <ImageView
+            android:id="@+id/map_iv_share_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintEnd_toStartOf="@id/map_tv_share_photo"
+            app:layout_constraintTop_toBottomOf="@+id/map_viewpager"
+            app:srcCompat="@drawable/map_ic_share" />
+
+        <TextView
+            android:id="@+id/map_tv_share_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
             android:text="与大家分享你拍摄的此地点"
             android:textColor="#234780"
             android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@+id/map_imageview6"
+            app:layout_constraintBottom_toBottomOf="@+id/map_iv_share_photo"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/map_imageview6" />
+            app:layout_constraintTop_toTopOf="@+id/map_iv_share_photo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

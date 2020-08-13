@@ -1,17 +1,68 @@
 package com.mredrock.cyxbs.discover.map.bean
 
-import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+import androidx.room.Entity
+import androidx.room.TypeConverters
 
+/**
+ * 基本地点坐标信息
+ */
 @Entity(primaryKeys = ["placeId"], tableName = "places")
-class Place {
-    @SerializedName(value = "placeId")
-    var placeId: Int = 0//本地数据库存储的ID标识，此处数据类型有待商榷
+class Place : Serializable {
+    @SerializedName("place_name")
     var placeName: String? = null
-    var buildingX: Int = 0
-    var buildingY: Int = 0
-    var buildingR: Int = 0
-    var tagX: Int = 0
-    var tagY: Int = 0
-    var tagR: Int = 0
+
+    @SerializedName("place_id")
+    var placeId: Int = 0
+
+    @SerializedName("place_center_x")
+    var placeCenterX: Float = 0f
+
+    @SerializedName("place_center_y")
+    var placeCenterY: Float = 0f
+
+    @TypeConverters(BuildingRectConverter::class)
+    @SerializedName("building_list")
+    var buildingRectList: MutableList<BuildingRect>? = null
+
+    @SerializedName("tag_left")
+    var tagLeft: Float = 0f
+
+    @SerializedName("tag_right")
+    var tagRight: Float = 0f
+
+    @SerializedName("tag_top")
+    var tagTop: Float = 0f
+
+    @SerializedName("tag_bottom")
+    var tagBottom: Float = 0f
+
+    class BuildingRect : Serializable {
+        @SerializedName("building_left")
+        var buildingLeft: Float = 0f
+
+        @SerializedName("building_right")
+        var buildingRight: Float = 0f
+
+        @SerializedName("building_top")
+        var buildingTop: Float = 0f
+
+        @SerializedName("building_bottom")
+        var buildingBottom: Float = 0f
+    }
+}
+
+class PlaceDetail : Serializable {
+    @SerializedName("place_name")
+    var placeName: String? = null
+
+    @SerializedName("place_attribute")
+    var placeAttribute: List<String>? = null
+
+    @SerializedName("tags")
+    var tags: List<String>? = null
+
+    @SerializedName("images")
+    var images: List<String>? = null
 }

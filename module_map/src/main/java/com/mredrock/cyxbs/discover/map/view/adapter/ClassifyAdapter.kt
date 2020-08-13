@@ -12,7 +12,7 @@ import com.mredrock.cyxbs.common.component.CyxbsToast
 import com.mredrock.cyxbs.common.utils.extensions.gone
 import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
-import com.mredrock.cyxbs.discover.map.bean.ClassifyPlace
+import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
 import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
 
 class ClassifyAdapter(
@@ -48,7 +48,7 @@ class ClassifyAdapter(
             } else {
                 holder.ivHot.gone()
             }
-            holder.tvName.text = item.name ?: ""
+            holder.tvName.text = item.title ?: ""
             if (selectedIndex != position) {
                 holder.tvName.background = null
             }

@@ -14,7 +14,9 @@ import android.widget.Toast
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.component.CyxbsToast
+import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
+import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
 import kotlin.math.sqrt
 
 class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? = null) : SubsamplingScaleImageView(context, attr) {
@@ -25,8 +27,18 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
     private var pinPositionList: MutableList<PointF> = ArrayList()
     private var sPinList: MutableList<PointF> = ArrayList()
     private var sPinSize = PointF()
-//    private var pinList: MutableList<ImageView> = ArrayList()
+
+    //    private var pinList: MutableList<ImageView> = ArrayList()
     private var pinBitmapList: MutableList<Bitmap> = ArrayList()
+
+    fun removeAllPin() {
+        pinBitmapList.clear()
+        pinVisibilityList.clear()
+        pinPositionList.clear()
+        sPinList.clear()
+        invalidate()
+    }
+
     fun addPin(pin: Bitmap, sPin: PointF) {
         sPinList.add(sPin)
         pinBitmapList.add(pin)
@@ -48,7 +60,7 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
             viewToSourceCoord(pinBitmapList[i].width.toFloat(), pinBitmapList[i].height.toFloat(), sPinSize)
             val vX = vPin.x - pinBitmapList[i].width / 2
             val vY = vPin.y - pinBitmapList[i].height
-            pinPositionList[i].set(sPinList[i].x - sPinSize.x / 2, sPinList[i].y - sPinSize.x)
+            pinPositionList[i].set(sPinList[i].x - sPinSize.x / 2, sPinList[i].y - sPinSize.y)
             if (pinVisibilityList[i]) {
                 canvas.drawBitmap(pinBitmapList[i], vX, vY, paint)
             }
@@ -87,7 +99,7 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                     if (sCoord?.x ?: 0f >= pinPositionList[i].x
                             && sCoord?.x ?: 0f <= pinPositionList[i].x + sPinSize.x
                             && sCoord?.y ?: 0f >= pinPositionList[i].y
-                            && sCoord?.y ?: 0f <= pinPositionList[i].y + sPinSize.x) {
+                            && sCoord?.y ?: 0f <= pinPositionList[i].y + sPinSize.y) {
                         pinVisibilityList[i] = false
                         invalidate()
                         return true
@@ -111,15 +123,39 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                 val sCoord: PointF? = this@PinView.viewToSourceCoord(e.x, e.y)
                 val x: Float = (sCoord?.x ?: 0f)
                 val y: Float = (sCoord?.y ?: 0f)
-                for (i: Int in PlaceData.placeList.indices) {
-                    if ((sqrt((x - PlaceData.placeList[i].buildingX) * (x - PlaceData.placeList[i].buildingX)
-                                    + (y - PlaceData.placeList[i].buildingY) * (y - PlaceData.placeList[i].buildingY))
-                            <= PlaceData.placeList[i].buildingR) ||
-                            (sqrt((x - PlaceData.placeList[i].tagX) * (x - PlaceData.placeList[i].tagX)
-                                    + (y - PlaceData.placeList[i].tagY) * (y - PlaceData.placeList[i].tagY))
-                                    <= PlaceData.placeList[i].tagR)) {
-                        CyxbsToast.makeText(BaseApp.context, PlaceData.placeList[i].placeName.toString(), Toast.LENGTH_LONG).show()
+                var isFind = false
+                out@ for (i: Int in PlaceData.placeList.indices) {
+                    val place = PlaceData.placeList[i]
+                    if (x >= place.tagLeft && x <= place.tagRight &&
+                            y >= place.tagTop && y <= place.tagBottom) {
+                        context?.run {
+                            if (this is MapActivity) {
+                                this.removeAllPin()
+                                this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX, PlaceData.placeList[i].placeCenterY)
+                            }
+                        }
+                        break@out
                     }
+                    PlaceData.placeList[i].buildingRectList?.run {
+                        for (j: Int in indices) {
+                            val buildingRect = place.buildingRectList?.get(j)
+                            buildingRect?.let {
+                                if (x >= it.buildingLeft && x <= it.buildingRight &&
+                                        y >= it.buildingTop && y <= it.buildingBottom) {
+                                    context?.run {
+                                        if (this is MapActivity) {
+                                            this.removeAllPin()
+                                            this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX, PlaceData.placeList[i].placeCenterY)
+                                        }
+                                    }
+//                                    CyxbsToast.makeText(BaseApp.context, PlaceData.placeList[i].placeName.toString(), Toast.LENGTH_LONG).show()
+                                    isFind = true
+                                }
+                            }
+                            if (isFind) break
+                        }
+                    }
+                    if (isFind) break
                 }
             }
             return true

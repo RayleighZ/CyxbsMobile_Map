@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="map_search_history">历史记录</string>
+    <string name="map_search_no_find">未能搜索到此地点</string>
     <string name="map_search_delete_all">清除全部</string>
     <string name="map_my_favorite">我的收藏</string>
+    <string name="map_search_hot">大家都在搜：</string>
 
     <string name="map_detail_detail">详情</string>
     <string name="map_detail_default_place_name">风雨操场123456789123456789</string>
+    <string name="map_detail_about_place">关于该地点</string>
+
+    <string name="map_alert_dialog_negative_button_text">取消</string>
+    <string name="map_alert_dialog_positive_button_text">确定</string>
+    <string name="map_alert_dialog_share_photo_title">共享照片</string>
+    <string name="map_alert_dialog_share_photo_content">在这里，与邮子们共同分享你们所拍的校园风景。上传你的照片，优质照片有机会在此展示。</string>
+    <string name="map_alert_dialog_cancel_collect_title">取消收藏</string>
+    <string name="map_alert_dialog_cancel_collect_content">是否将该地点从“我的收藏”中移出</string>
+
+    <string name="map_my_favorite_no_favorite">暂无收藏哦</string>
+    <string name="map_my_favorite_no_favorite_toast">啊哦，你还未收藏地点</string>
+    <string name="map_activity_all_photo_title">所有图片</string>
+    <string name="map_activity_showpic_sharewords">与大家分享你拍摄的此地点</string>
+    <string name="map_activity_allpic_no_more_pic">暂无更多图片</string>
 </resources>

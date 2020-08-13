@@ -8,7 +8,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.util.TypeFaceUtil
 
-class TypefaceTextView : AppCompatTextView {
+open class TypefaceTextView : AppCompatTextView {
     constructor(context: Context) : this(context, null)
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -27,6 +27,7 @@ class TypefaceTextView : AppCompatTextView {
         fun getTypeface(typefaceType: Int?) = when (typefaceType) {
             TypeFaceUtil.PFSCH_TYPEFACE -> TypeFaceUtil.getPFSCHTypeface()
             TypeFaceUtil.PFSCM_TYPEFACE -> TypeFaceUtil.getPFSCMTypeface()
+            TypeFaceUtil.PFSCB_TYPEFACE -> TypeFaceUtil.getPFSCBTypeface()
             else -> Typeface.DEFAULT
         }
     }

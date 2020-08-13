@@ -6,9 +6,11 @@ import com.mredrock.cyxbs.common.BaseApp
 object TypeFaceUtil {
     const val PFSCH_TYPEFACE = 1
     const val PFSCM_TYPEFACE = 2
+    const val PFSCB_TYPEFACE = 3
 
     private var PFSCHTypeface: Typeface? = null
     private var PFSCMTypeface: Typeface? = null
+    private var PFSCBTypeface: Typeface? = null
 
     fun getPFSCHTypeface(): Typeface? = if (PFSCHTypeface == null) {
         try {
@@ -28,5 +30,15 @@ object TypeFaceUtil {
         }
     } else {
         PFSCMTypeface
+    }
+
+    fun getPFSCBTypeface(): Typeface? = if (PFSCBTypeface == null) {
+        try {
+            Typeface.createFromAsset(BaseApp.context.assets, "fonts/PingFang-SC-Bold.ttf")
+        } catch (e: RuntimeException) {
+            Typeface.DEFAULT
+        }
+    } else {
+        PFSCBTypeface
     }
 }
