@@ -142,6 +142,9 @@ class MapActivity : BaseActivity() {
         iv_map.setImage(ImageSource.resource(R.drawable.map_ic_map))
 
         et_map_search.setOnTouchListener { v, event ->
+            if (getDetailFragmentState() == BottomSheetBehavior.STATE_EXPANDED) {
+                detailFragmentScroll(BottomSheetBehavior.STATE_COLLAPSED)
+            }
             showKeyBoard(et_map_search)
             if (event?.action == MotionEvent.ACTION_UP && !searchFragmentIsShowing) {
                 if (searchFragment == null) {
@@ -281,6 +284,7 @@ class MapActivity : BaseActivity() {
                     this@MapActivity.viewModel.getHot()
                 }
                 placeList?.let { it1 ->
+                    PlaceData.placeList.clear()
                     PlaceData.placeList.addAll(it1)
                 }
                 PlaceData.mapData.mapBackgroundColor = mapBackgroundColor
@@ -289,25 +293,6 @@ class MapActivity : BaseActivity() {
                 PlaceData.mapData.mapUrl = mapUrl
                 PlaceData.mapData.zoomInId = zoomInId
 
-                //测试数据
-                val place = Place()
-                val buildingRect = Place.BuildingRect()
-                buildingRect.buildingTop = 7662f
-                buildingRect.buildingLeft = 3452f
-                buildingRect.buildingBottom = 7893f
-                buildingRect.buildingRight = 3812f
-                place.placeName = "老图书馆"
-                place.buildingRectList = ArrayList()
-                place.buildingRectList?.add(buildingRect)
-                place.tagTop = 7884f
-                place.tagLeft = 3335f
-                place.tagBottom = 7956f
-                place.tagRight = 3569f
-                place.placeCenterX = 3644f
-                place.placeCenterY = 7800f
-
-                PlaceData.placeList.add(place)
-
                 for (i: Int in PlaceData.placeList.indices) {
                     if (PlaceData.placeList[i].placeId == zoomInId) {
                         iv_map.setOnImageEventListener(object : OnImageEventListener {
@@ -315,8 +300,10 @@ class MapActivity : BaseActivity() {
                             }
 
                             override fun onReady() {
-                                pinAndZoomIn(1558f, 8714f)    //大门测试数据
-//                                pinAndZoomIn(PlaceData.placeList[i].placeCenterX, PlaceData.placeList[i].placeCenterY)
+//                                pinAndZoomIn(1558f, 8714f)    //大门测试数据
+                                pinAndZoomIn(PlaceData.placeList[i].placeCenterX,
+                                        PlaceData.placeList[i].placeCenterY,
+                                        PlaceData.placeList[i].placeId)
 
 //                                    //地点测试数据
 //                                    val place = Place()
@@ -359,7 +346,7 @@ class MapActivity : BaseActivity() {
         })
     }
 
-    fun pinAndZoomIn(x: Float, y: Float) {
+    fun pinAndZoomIn(x: Float, y: Float, placeId: Int) {
         if (iv_map.isReady) {
 //            val maxScale: Float = iv_map.maxScale
 //            val minScale: Float = iv_map.minScale
@@ -373,7 +360,7 @@ class MapActivity : BaseActivity() {
             iv_map.addPin(pin, center)
             val animationBuilder: AnimationBuilder? = iv_map.animateScaleAndCenter(scale, center)
             animationBuilder?.withDuration(1000)?.withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)?.withInterruptible(false)?.start()
-            loadDetailFragment()
+            loadDetailFragment(placeId)
 //
 //            //TODO:在MVVM的Model里进行数据库操作
             Thread(Runnable {
@@ -383,6 +370,8 @@ class MapActivity : BaseActivity() {
 //                PlaceData.placeList.add(placeArray[0])
                 //PlaceData.placeList[0].placeName?.let { LogUtils.d("MapActivity" , it) }
             }).start()
+
+            detailFragmentScroll(BottomSheetBehavior.STATE_COLLAPSED)
         }
     }
 
@@ -398,8 +387,11 @@ class MapActivity : BaseActivity() {
                 et_map_search.setText("")
             } else {
                 //只有detailFragment在栈中
-//                detailFragmentScrollToBottom()
-                supportFragmentManager.popBackStack("detailFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                if (getDetailFragmentState() == BottomSheetBehavior.STATE_EXPANDED) {
+                    detailFragmentScroll(BottomSheetBehavior.STATE_COLLAPSED)
+                } else {
+                    supportFragmentManager.popBackStack("detailFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                }
             }
         } else {
             if (et_map_search.isFocused) {
@@ -469,27 +461,35 @@ class MapActivity : BaseActivity() {
         return windowPos
     }
 
-    private fun loadDetailFragment() {
+    private fun loadDetailFragment(placeId: Int) {
 //        val redRockBottomSheetDialog = RedRockBottomSheetDialog(BaseApp.context)
 //        val view = View.inflate(this, R.layout.map_fragment_detail, null)
 //        redRockBottomSheetDialog.setContentView(view)
         val fm = supportFragmentManager
         val transaction = fm.beginTransaction()
+        DetailFragment.placeId = placeId
         detailFragment = DetailFragment()
-        detailFragment.placeId = 0
         transaction.replace(R.id.fm_detail, detailFragment)
-        transaction.addToBackStack("detailFragment")
-        transaction.commitAllowingStateLoss()
+                .addToBackStack("detailFragment")
+                .commitAllowingStateLoss()
     }
 
-    private fun detailFragmentScrollToBottom() {
+    private fun detailFragmentScroll(state: Int) {
         val params = fm_detail?.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior
         if (behavior is BottomSheetBehavior) {
-            //拿到下方tabs的y坐标，即为我要的偏移量
-//            val y: Float = binding.tabs.getY()
-            //注意传递负值
-            behavior.setExpandedOffset(-50)
+            if (behavior.state != state) {
+                behavior.state = state
+            }
         }
+    }
+
+    private fun getDetailFragmentState(): Int {
+        val params = fm_detail?.layoutParams as CoordinatorLayout.LayoutParams
+        val behavior = params.behavior
+        if (behavior is BottomSheetBehavior) {
+            return behavior.state
+        }
+        return -1
     }
 }

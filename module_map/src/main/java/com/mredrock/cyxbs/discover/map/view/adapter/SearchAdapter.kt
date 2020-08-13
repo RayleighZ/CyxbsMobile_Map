@@ -61,7 +61,7 @@ class SearchAdapter(
                     supportFragmentManager.popBackStackImmediate("searchFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
                     if (this is MapActivity) {
                         this.removeAllPin()
-                        this.pinAndZoomIn(item.placeCenterX, item.placeCenterY)
+                        this.pinAndZoomIn(item.placeCenterX, item.placeCenterY, item.placeId)
                         this.hideKeyBoard()
                         this.searchFragment = null
                     }
@@ -84,7 +84,7 @@ class SearchAdapter(
                     supportFragmentManager.popBackStack()
                     if (this is MapActivity) {
                         this.removeAllPin()
-                        this.pinAndZoomIn(item.placeCenterX, item.placeCenterY)
+                        this.pinAndZoomIn(item.placeCenterX, item.placeCenterY, item.placeId)
                         this.hideKeyBoard()
                         this.searchFragment = null
                     }

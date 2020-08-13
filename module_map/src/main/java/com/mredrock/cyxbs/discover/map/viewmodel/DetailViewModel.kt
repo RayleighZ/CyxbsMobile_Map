@@ -73,9 +73,6 @@ class DetailViewModel : BaseViewModel() {
                     BaseApp.context.dp2px(5f))
             cycleTextView.typeface = TypeFaceUtil.getPFSCMTypeface()
             cycleTextView.textColor = BaseApp.context.resources.getColor(R.color.map_activity_search_history_item_text_color)
-//            cycleTextView.post {
-//                cycleTextView.width += 40
-//            }
             chipGroup?.addView(cycleTextView)
         }
     }

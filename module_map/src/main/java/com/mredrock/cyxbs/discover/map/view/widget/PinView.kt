@@ -131,7 +131,9 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                         context?.run {
                             if (this is MapActivity) {
                                 this.removeAllPin()
-                                this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX, PlaceData.placeList[i].placeCenterY)
+                                this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX,
+                                        PlaceData.placeList[i].placeCenterY,
+                                        PlaceData.placeList[i].placeId)
                             }
                         }
                         break@out
@@ -145,7 +147,9 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                                     context?.run {
                                         if (this is MapActivity) {
                                             this.removeAllPin()
-                                            this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX, PlaceData.placeList[i].placeCenterY)
+                                            this.pinAndZoomIn(PlaceData.placeList[i].placeCenterX,
+                                                    PlaceData.placeList[i].placeCenterY,
+                                                    PlaceData.placeList[i].placeId)
                                         }
                                     }
 //                                    CyxbsToast.makeText(BaseApp.context, PlaceData.placeList[i].placeName.toString(), Toast.LENGTH_LONG).show()

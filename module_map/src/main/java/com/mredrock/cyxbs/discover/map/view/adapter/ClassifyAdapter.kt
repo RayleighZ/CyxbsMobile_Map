@@ -1,5 +1,7 @@
 package com.mredrock.cyxbs.discover.map.view.adapter
 
+import android.R.attr.button
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
 import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
+
 
 class ClassifyAdapter(
         private val activity: MapActivity,
@@ -61,7 +64,10 @@ class ClassifyAdapter(
                     }
                 }
                 selectedIndex = position
-                holder.tvName.background = BaseApp.context.getDrawable(R.drawable.map_shape_classify_item_selected)
+                holder.tvName.setBackgroundResource(R.drawable.map_shape_classify_item_selected)
+                val alpha: ObjectAnimator = ObjectAnimator.ofFloat(holder.tvName, "alpha", 0f, 1f)
+                alpha.duration = 300
+                alpha.start()
 
                 //在下面做点击逻辑
                 CyxbsToast.makeText(BaseApp.context, "点击了：${holder.tvName.text}", Toast.LENGTH_SHORT).show()

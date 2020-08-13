@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -33,13 +36,12 @@ import java.lang.ref.WeakReference
  */
 class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
     override val viewModelClass = DetailViewModel::class.java
-    var placeId = -1 //设置地点ID，默认为-1，使用default值
     lateinit var mView: View
     lateinit var tvName: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val collectBinding : MapFragmentDetailBinding =
+        val collectBinding: MapFragmentDetailBinding =
                 DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.map_fragment_detail, null, false)
 
         collectBinding.viewModel = viewModel
@@ -54,23 +56,28 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.setIcon(WeakReference(view.findViewById(R.id.ll_map_icon_container)), listOf("操场", "活动中心"))
-        viewModel.setDetails(WeakReference(view.findViewById(R.id.chip_group_detail_container)), listOf( "热爱跑步的请进", "太强了跑步的涛哥", "张涛男神出没", "卑微张煜在线减肥"))
+        viewModel.setDetails(WeakReference(view.findViewById(R.id.chip_group_detail_container)), listOf("热爱跑步的请进", "太强了跑步的涛哥", "张涛男神出没", "卑微张煜在线减肥"))
         val vpAdapter = DetailViewPageAdapter()
         map_viewpager.adapter = vpAdapter
         map_viewpager.pageMargin = 24
         viewModel.setDetailPic(vpAdapter, listOf())
         tv_map_place_name.isSelected = true
-        if (placeId != -1)
-        viewModel.placeName.set(PlaceData.placeList[placeId].placeName)
+        if (placeId != -1) {
+            for (i: Int in PlaceData.placeList.indices) {
+                if (PlaceData.placeList[i].placeId == placeId) {
+                    viewModel.placeName.set(PlaceData.placeList[i].placeName)
+                }
+            }
+        }
 
         map_iv_start.setOnClickListener {
             //举例，传入地点ID加载收藏界面
-            context?.let { it1 -> CollectActivity.actionStart(it1, 0) }
+            context?.let { it1 -> CollectActivity.actionStart(it1, placeId) }
         }
 
         //进行测试，此处随便给了几个url
-        map_tv_show_maore_pic.setOnClickListener{
-            context?.let { it1 -> ShowAllPicActivity.actionStart(it1, arrayOf("https://bihu-head.oss-cn-chengdu.aliyuncs.com/Eva3.jpg" , "https://bihu-head.oss-cn-chengdu.aliyuncs.com/eva.png", "https://image.baidu.com/search/detail?ct=503316480&z=undefined&tn=baiduimagedetail&ipn=d&word=%E8%8A%9C%E6%B9%96%E5%A4%A7%E5%8F%B8%E9%A9%AC&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=undefined&hd=undefined&latest=undefined&copyright=undefined&cs=1885695158,4148174646&os=1488174142,779019841&simid=3601840413,379195290&pn=0&rn=1&di=154770&ln=1036&fr=&fmq=1597312174758_R&fm=&ic=undefined&s=undefined&se=&sme=&tab=0&width=undefined&height=undefined&face=undefined&is=0,0&istype=0&ist=&jit=&bdtype=0&spn=0&pi=0&gsm=0&objurl=http%3A%2F%2Fpic1.zhimg.com%2F80%2Fv2-5cc7f1f5624d5d4ff89cf0da89f75cac_hd.jpg&rpstart=0&rpnum=0&adpicid=0&force=undefined")) }
+        map_tv_show_maore_pic.setOnClickListener {
+            context?.let { it1 -> ShowAllPicActivity.actionStart(it1, arrayOf("https://bihu-head.oss-cn-chengdu.aliyuncs.com/Eva3.jpg", "https://bihu-head.oss-cn-chengdu.aliyuncs.com/eva.png", "https://image.baidu.com/search/detail?ct=503316480&z=undefined&tn=baiduimagedetail&ipn=d&word=%E8%8A%9C%E6%B9%96%E5%A4%A7%E5%8F%B8%E9%A9%AC&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=undefined&hd=undefined&latest=undefined&copyright=undefined&cs=1885695158,4148174646&os=1488174142,779019841&simid=3601840413,379195290&pn=0&rn=1&di=154770&ln=1036&fr=&fmq=1597312174758_R&fm=&ic=undefined&s=undefined&se=&sme=&tab=0&width=undefined&height=undefined&face=undefined&is=0,0&istype=0&ist=&jit=&bdtype=0&spn=0&pi=0&gsm=0&objurl=http%3A%2F%2Fpic1.zhimg.com%2F80%2Fv2-5cc7f1f5624d5d4ff89cf0da89f75cac_hd.jpg&rpstart=0&rpnum=0&adpicid=0&force=undefined")) }
         }
 
         //动态设置头部可见高度
@@ -96,5 +103,18 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
                 }).show()
             }
         }
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        return if (enter) {
+            AnimationUtils.loadAnimation(activity, R.anim.map_anl_show)
+        } else {
+            AnimationUtils.loadAnimation(activity, R.anim.map_anl_hide)
+        }
+    }
+
+    companion object {
+        //设置地点ID，默认为-1，使用default值
+        var placeId: Int = -1
     }
 }

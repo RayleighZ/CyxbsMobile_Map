@@ -22,4 +22,9 @@
     <string name="map_activity_all_photo_title">所有图片</string>
     <string name="map_activity_showpic_sharewords">与大家分享你拍摄的此地点</string>
     <string name="map_activity_allpic_no_more_pic">暂无更多图片</string>
+    <string name="map_activity_collect_recommend">推荐</string>
+    <string name="map_activity_collect_collect_place_as">将该收藏改为</string>
+    <string name="map_activity_collect_yes">确定</string>
+    <string name="map_activity_collect_cancel">取消</string>
+    <string name="map_activity_collect_uncollect_place">不再收藏该地点</string>
 </resources>
