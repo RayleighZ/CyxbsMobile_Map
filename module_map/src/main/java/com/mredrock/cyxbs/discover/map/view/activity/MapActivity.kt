@@ -2,23 +2,25 @@ package com.mredrock.cyxbs.discover.map.view.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Point
-import android.graphics.PointF
+import android.graphics.*
 import android.os.Bundle
+import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.*
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,9 +43,10 @@ import com.mredrock.cyxbs.discover.map.bean.BasicMapData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
 import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
-import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.database.PlaceDatabase
+import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil
+import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil.getProgressBar
 import com.mredrock.cyxbs.discover.map.view.adapter.ClassifyAdapter
 import com.mredrock.cyxbs.discover.map.view.adapter.FavoriteAdapter
 import com.mredrock.cyxbs.discover.map.view.fragment.DetailFragment
@@ -52,21 +55,27 @@ import com.mredrock.cyxbs.discover.map.viewmodel.MapViewModel
 import kotlinx.android.synthetic.main.map_activity_map.*
 import kotlinx.android.synthetic.main.map_fragment_search.*
 import kotlinx.android.synthetic.main.map_pop_window_no_favorite.view.*
-import java.io.Serializable
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 
 class MapActivity : BaseActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(MapViewModel::class.java) }
-    private lateinit var popWindow: PopupWindow
+
+    //    private lateinit var popWindow: PopupWindow
     private val classifyItemList: MutableList<ClassifyPlace> = ArrayList()
-    private val favoriteItemList: MutableList<FavoritePlace> = ArrayList()
+//    private val favoriteItemList: MutableList<FavoritePlace> = ArrayList()
     private val classifyAdapter: ClassifyAdapter = ClassifyAdapter(this, classifyItemList)
-    private val favoriteAdapter: FavoriteAdapter = FavoriteAdapter(this, favoriteItemList)
+
+    //    private val favoriteAdapter: FavoriteAdapter = FavoriteAdapter(this, favoriteItemList)
     private var searchFragmentIsShowing: Boolean = false        //判断搜索fragment是否显示
     private var detailFragment: DetailFragment? = null
     var searchFragment: SearchFragment? = null
+    private var downloadProgressDialog: AlertDialog? = null
+    private var isCancelDownloadMap = false
+    private var mapTimeStamp = 0L       //从服务器拿到的地图时间戳
 
     override val isFragmentActivity = false
 
@@ -97,51 +106,25 @@ class MapActivity : BaseActivity() {
         statusBarLinearParams.height = getStatusBarHeight() //状态栏高度
         view_status_bar.layoutParams = statusBarLinearParams
 
-        iv_map.setMaximumDpi(10)
+//        iv_map.setMaximumDpi(10)
 
         //初始化我的收藏弹出菜单
-        val popWindowView: View = LayoutInflater.from(this).inflate(R.layout.map_pop_window_no_favorite, null)
-        val linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        popWindowView.rv_map_pop_window.layoutManager = linearLayoutManager
-        popWindowView.rv_map_pop_window.adapter = favoriteAdapter
-        popWindowView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-        popWindow = PopupWindow(popWindowView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true) //-2 是包裹内容，-1 是填充父窗体
-        popWindow.setBackgroundDrawable(getDrawable(android.R.color.transparent))//透明背景
-        popWindow.isOutsideTouchable = true
-        popWindow.isFocusable = true
-        popWindow.animationStyle = R.style.PopWindow_Anim_Style
+//        val popWindowView: View = LayoutInflater.from(this).inflate(R.layout.map_pop_window_no_favorite, null)
+//        val linearLayoutManager = LinearLayoutManager(this)
+//        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+//        popWindowView.rv_map_pop_window.layoutManager = linearLayoutManager
+//        popWindowView.rv_map_pop_window.adapter = favoriteAdapter
+//        popWindowView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+//        popWindow = PopupWindow(popWindowView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true) //-2 是包裹内容，-1 是填充父窗体
+//        popWindow.setBackgroundDrawable(getDrawable(android.R.color.transparent))//透明背景
+//        popWindow.isOutsideTouchable = true
+//        popWindow.isFocusable = true
+//        popWindow.animationStyle = R.style.PopWindow_Anim_Style
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
         rv_map_classify.layoutManager = layoutManager
         rv_map_classify.adapter = classifyAdapter
-
-        //test data
-        val favoritePlace = FavoritePlace()
-        favoritePlace.placeNickname = "食堂"
-        favoriteItemList.add(favoritePlace)
-
-        val favoritePlace2 = FavoritePlace()
-        favoritePlace2.placeNickname = "我的收藏"
-        favoriteItemList.add(favoritePlace2)
-
-        val favoritePlace3 = FavoritePlace()
-        favoritePlace3.placeNickname = "我的收藏1"
-        favoriteItemList.add(favoritePlace3)
-
-        val favoritePlace4 = FavoritePlace()
-        favoritePlace4.placeNickname = "我的收藏22222"
-        favoriteItemList.add(favoritePlace4)
-        favoriteItemList.add(favoritePlace4)
-        favoriteItemList.add(favoritePlace4)
-        favoriteItemList.add(favoritePlace4)
-        favoriteItemList.add(favoritePlace4)
-        favoriteItemList.add(favoritePlace4)
-        favoriteItemList.add(favoritePlace4)
-        favoriteItemList.clear()
-
-        iv_map.setImage(ImageSource.resource(R.drawable.map_ic_map))
 
         et_map_search.setOnTouchListener { v, event ->
             if (getDetailFragmentState() == BottomSheetBehavior.STATE_EXPANDED) {
@@ -159,31 +142,69 @@ class MapActivity : BaseActivity() {
                             .commitAllowingStateLoss()
                     searchFragmentIsShowing = true
                 }
+
+                iv_map_back.startAnimation(AnimationUtils.loadAnimation(this, R.anim.map_anl_push_left_out))
+                tv_map_cancel_search.startAnimation(AnimationUtils.loadAnimation(this, R.anim.map_anl_push_right_in))
+                tv_map_cancel_search.visible()
+                val lp = this@MapActivity.et_map_search.layoutParams as ConstraintLayout.LayoutParams
+                lp.marginStart = dp2px(15f)
+                lp.marginEnd = 0
+                et_map_search.layoutParams = lp
+                iv_map_back.gone()
             }
 
             false
         }
 
+        tv_map_cancel_search.setOnClickListener {
+            val lp = et_map_search.layoutParams as ConstraintLayout.LayoutParams
+            lp.marginStart = 0
+            lp.marginEnd = dp2px(15f)
+            et_map_search.layoutParams = lp
+            iv_map_back.startAnimation(AnimationUtils.loadAnimation(this, R.anim.map_anl_push_left_in))
+            iv_map_back.visible()
+            tv_map_cancel_search.startAnimation(AnimationUtils.loadAnimation(this, R.anim.map_anl_push_right_out))
+            tv_map_cancel_search.gone()
+            iv_map_back.callOnClick()
+        }
+
         cl_map_favorite.setOnClickListener {
-            if (favoriteItemList.size == 0) {
-                popWindowView.rv_map_pop_window.gone()
-                popWindowView.tv_map_no_favorite.visible()
+            //test data
+            PlaceData.collectPlaceList.add(PlaceData.placeList[0])
+            PlaceData.collectPlaceList.add(PlaceData.placeList[5])
+            PlaceData.collectPlaceList.add(PlaceData.placeList[30])
+            PlaceData.collectPlaceList.add(PlaceData.placeList[20])
+            PlaceData.collectPlaceList.add(PlaceData.placeList[13])
+            PlaceData.collectPlaceList.add(PlaceData.placeList[27])
+            PlaceData.collectPlaceList.add(PlaceData.placeList[10])
+
+            if (PlaceData.collectPlaceList.size == 0) {
+//                popWindowView.rv_map_pop_window.gone()
+//                popWindowView.tv_map_no_favorite.visible()
 
                 val toast: Toast = CyxbsToast.makeText(BaseApp.context, R.string.map_my_favorite_no_favorite_toast, Toast.LENGTH_SHORT)
                 toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, toast.xOffset, toast.yOffset)
                 toast.show()
             } else {
-                favoriteAdapter.notifyDataSetChanged()
+                supportFragmentManager.popBackStack("detailFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                detailFragment = null
+
+                removeAllPin()
+                for (i: Int in PlaceData.collectPlaceList.indices) {
+                    pin(PlaceData.collectPlaceList[i].placeCenterX, PlaceData.collectPlaceList[i].placeCenterY)
+                }
+                ZoomInMin(PlaceData.mapData.mapWidth / 2f, PlaceData.mapData.mapHeight / 2f)
+//                favoriteAdapter.notifyDataSetChanged()
             }
 
-            cl_map_favorite.measure(0, 0)
-            val location = IntArray(2)
-            cl_map_favorite.getLocationOnScreen(location)
-            cl_map_favorite.measure(0, 0)
-            val windowPos: IntArray? = calculatePopWindowPos(cl_map_favorite, popWindowView)
-            popWindow.showAtLocation(cl_map_favorite, Gravity.TOP or Gravity.START, (windowPos?.get(0)
-                    ?: 0) - dp2px(15f), (windowPos?.get(1) ?: 0))
-            popWindow.update()
+//            cl_map_favorite.measure(0, 0)
+//            val location = IntArray(2)
+//            cl_map_favorite.getLocationOnScreen(location)
+//            cl_map_favorite.measure(0, 0)
+//            val windowPos: IntArray? = calculatePopWindowPos(cl_map_favorite, popWindowView)
+//            popWindow.showAtLocation(cl_map_favorite, Gravity.TOP or Gravity.START, (windowPos?.get(0)
+//                    ?: 0) - dp2px(15f), (windowPos?.get(1) ?: 0))
+//            popWindow.update()
         }
 
         window.decorView.findViewById<View>(android.R.id.content).setOnTouchListener { _, _ -> // rel.setFocusable(true);
@@ -279,6 +300,33 @@ class MapActivity : BaseActivity() {
     }
 
     private fun initObserver() {
+        viewModel.mDownloadProgress.observe(this, Observer<Float> {
+            downloadProgressDialog?.let { it1 ->
+                it1.setOnCancelListener {
+                    viewModel.mDisposable?.dispose()
+                    CyxbsToast.makeText(BaseApp.context, getString(R.string.map_cancel_download_map), Toast.LENGTH_LONG).show()
+                    downloadProgressDialog = null
+                    isCancelDownloadMap = true
+                }
+
+            }
+            if (abs(it - 1) < 0.01 || it == 0f) {
+                downloadProgressDialog?.let { it1 ->
+                    it1.hide()
+                    downloadProgressDialog = null
+                }
+            } else {
+                if (downloadProgressDialog == null && !isCancelDownloadMap) {
+                    downloadProgressDialog = DownloadProgressDialogUtil.getDownloadProgressDialog(this, getString(R.string.map_activity_download_map))
+                }
+                downloadProgressDialog?.let { it1 ->
+                    it1.setCanceledOnTouchOutside(false)
+                    it1.show()
+                    it1.getProgressBar()?.progress = (it * 100).toInt()
+                }
+            }
+        })
+
         viewModel.mClassify.observe(this, Observer<ClassifyData> {
             it.buttonInfo?.run {
                 classifyItemList.clear()
@@ -299,6 +347,11 @@ class MapActivity : BaseActivity() {
             }
         })
 
+        viewModel.mMapPath.observe(this, Observer<String> {
+            PlaceData.mapData.mapTimeStamp = this@MapActivity.mapTimeStamp
+            this@MapActivity.iv_map.setImage(ImageSource.uri(it))
+        })
+
         viewModel.mBasicMapData.observe(this, Observer<BasicMapData> {
             it?.run {
                 if (hotWord != null && hotWord != "") {
@@ -311,11 +364,22 @@ class MapActivity : BaseActivity() {
                     PlaceData.placeList.clear()
                     PlaceData.placeList.addAll(it1)
                 }
-                PlaceData.mapData.mapBackgroundColor = mapBackgroundColor
+                PlaceData.mapData.mapBackgroundColor = mapBackgroundColor ?: "#FFFFFF"
                 PlaceData.mapData.mapHeight = mapHeight
                 PlaceData.mapData.mapWidth = mapWidth
                 PlaceData.mapData.mapUrl = mapUrl
                 PlaceData.mapData.zoomInId = zoomInId
+                this@MapActivity.mapTimeStamp = mapTimeStamp
+
+                this@MapActivity.iv_map.setBackgroundColor(Color.parseColor(mapBackgroundColor))
+
+                val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
+//                if (File(mapPath).exists() && PlaceData.mapData.mapTimeStamp >= mapTimeStamp) {
+                if (File(mapPath).exists()) {
+                    this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
+                } else {
+                    viewModel.getMap()
+                }
 
                 for (i: Int in PlaceData.placeList.indices) {
                     if (PlaceData.placeList[i].placeId == zoomInId) {
@@ -379,14 +443,34 @@ class MapActivity : BaseActivity() {
 
             //TODO:在MVVM的Model里进行数据库操作
             Thread(Runnable {
-                val placeArray = PlaceDatabase.getDataBase(this@MapActivity)
-                        .getPlaceDao().queryAllPlaces()
+                // TODO: 2020/8/14 0014 下面两行会导致崩溃
+//                val placeArray = PlaceDatabase.getDataBase(this@MapActivity)
+//                        .getPlaceDao().queryAllPlaces()
                 // TODO: placeArray[0]下标越界
 //                PlaceData.placeList.add(placeArray[0])
                 //PlaceData.placeList[0].placeName?.let { LogUtils.d("MapActivity" , it) }
             }).start()
 
             detailFragmentScroll(BottomSheetBehavior.STATE_COLLAPSED)
+        }
+    }
+
+    fun pin(x: Float, y: Float) {
+        if (iv_map.isReady) {
+            val center = PointF(x, y)
+            val density = resources.displayMetrics.densityDpi.toFloat()
+            var pin = BitmapFactory.decodeResource(this.resources, R.drawable.map_ic_pin)
+            val w = density / 420f * pin.width
+            val h = density / 420f * pin.height
+            pin = Bitmap.createScaledBitmap(pin, w.toInt(), h.toInt(), true)
+            iv_map.addPin(pin, center)
+        }
+    }
+
+    fun ZoomInMin(x: Float, y: Float) {
+        if (iv_map.isReady) {
+            val animationBuilder: AnimationBuilder? = iv_map.animateScaleAndCenter(iv_map.minScale, PointF(x, y))
+            animationBuilder?.withDuration(700)?.withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)?.withInterruptible(false)?.start()
         }
     }
 
@@ -399,6 +483,14 @@ class MapActivity : BaseActivity() {
             //searchFragment在栈中
             if (supportFragmentManager.popBackStackImmediate("searchFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
                 searchFragment = null
+                val lp = et_map_search.layoutParams as ConstraintLayout.LayoutParams
+                lp.marginStart = 0
+                lp.marginEnd = dp2px(15f)
+                et_map_search.layoutParams = lp
+                iv_map_back.startAnimation(AnimationUtils.loadAnimation(this, R.anim.map_anl_push_left_in))
+                iv_map_back.visible()
+                tv_map_cancel_search.startAnimation(AnimationUtils.loadAnimation(this, R.anim.map_anl_push_right_out))
+                tv_map_cancel_search.gone()
                 et_map_search.setText("")
             } else {
                 //只有detailFragment在栈中

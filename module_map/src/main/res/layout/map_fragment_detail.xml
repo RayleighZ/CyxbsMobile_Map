@@ -86,7 +86,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="32dp"
             android:text="@string/map_detail_about_place"
-            android:textColor="@color/map_activity_favorite_name_color"
+            android:textColor="@color/map_activity_detail_about_place_color"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/map_tv_share_photo"

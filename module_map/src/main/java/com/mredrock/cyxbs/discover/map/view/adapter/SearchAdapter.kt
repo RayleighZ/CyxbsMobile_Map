@@ -50,8 +50,9 @@ class SearchAdapter(
             holder.itemView.setOnClickListener {
                 //放到首位
                 for (i: Int in PlaceData.searchHistoryList.indices) {
-                    if (PlaceData.searchHistoryList[i].placeName == item.placeName) {
+                    if (PlaceData.searchHistoryList[i].placeId == item.placeId) {
                         PlaceData.searchHistoryList.removeAt(i)
+                        break
                     }
                 }
                 PlaceData.searchHistoryList.add(0, item)
@@ -73,8 +74,9 @@ class SearchAdapter(
             holder.itemView.setOnClickListener {
                 //放到首位
                 for (i: Int in PlaceData.searchHistoryList.indices) {
-                    if (PlaceData.searchHistoryList[i].placeName == item.placeName) {
+                    if (PlaceData.searchHistoryList[i].placeId == item.placeId) {
                         PlaceData.searchHistoryList.removeAt(i)
+                        break
                     }
                 }
                 PlaceData.searchHistoryList.add(0, item)

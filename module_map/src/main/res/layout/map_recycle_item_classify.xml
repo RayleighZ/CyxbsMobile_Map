@@ -4,23 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingStart="6.5dp">
+    android:paddingStart="6dp">
 
     <Space
         android:id="@+id/space_map_classify_top"
         android:layout_width="match_parent"
-        android:layout_height="14.5dp"
+        android:layout_height="13dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Space
         android:id="@+id/space_map_classify_bottom"
         android:layout_width="match_parent"
-        android:layout_height="14.5dp"
+        android:layout_height="13dp"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Space
         android:id="@+id/space_map_classify_right"
-        android:layout_width="6.5dp"
+        android:layout_width="6dp"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_map_classify_name" />
@@ -30,12 +30,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/map_shape_classify_item_selected"
-        android:paddingStart="7.5dp"
+        android:gravity="center"
+        android:paddingStart="12dp"
         android:paddingTop="5.5dp"
-        android:paddingEnd="7.5dp"
+        android:paddingEnd="12dp"
         android:paddingBottom="5.5dp"
         android:textColor="@color/map_activity_classify_name_color"
-        android:textSize="15sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@id/space_map_classify_bottom"
         app:layout_constraintEnd_toStartOf="@id/space_map_classify_right"
         app:layout_constraintStart_toStartOf="parent"

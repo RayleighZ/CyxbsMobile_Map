@@ -23,10 +23,13 @@ class BasicMapData : Serializable {
     var mapHeight: Float = 0f
 
     @SerializedName("map_background_color")
-    var mapBackgroundColor: String = "#96ECBB"
+    var mapBackgroundColor: String? = null
 
-    @SerializedName("id")
+    @SerializedName("open_site")
     var zoomInId: Int = 1
+
+    @SerializedName("picture_version")
+    var mapTimeStamp: Long = 0
 }
 
 //目前只在全局数据PlaceData类使用
@@ -43,5 +46,9 @@ class MapData : Serializable {
     @SerializedName("map_background_color")
     var mapBackgroundColor: String = "#96ECBB"
 
+    @SerializedName("open_site")
     var zoomInId: Int = 1
+
+    @SerializedName("picture_version")
+    var mapTimeStamp: Long = 0
 }

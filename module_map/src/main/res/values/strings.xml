@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="map_cancel_download_map">取消了下载地图，地图将不能显示</string>
     <string name="map_search_history">历史记录</string>
     <string name="map_search_no_find">未能搜索到此地点</string>
     <string name="map_search_delete_all">清除全部</string>
+    <string name="map_search_cancel">取消</string>
     <string name="map_my_favorite">我的收藏</string>
     <string name="map_search_hot">大家都在搜：</string>
 
@@ -27,4 +29,5 @@
     <string name="map_activity_collect_yes">确定</string>
     <string name="map_activity_collect_cancel">取消</string>
     <string name="map_activity_collect_uncollect_place">不再收藏该地点</string>
+    <string name="map_activity_download_map">正在下载地图</string>
 </resources>

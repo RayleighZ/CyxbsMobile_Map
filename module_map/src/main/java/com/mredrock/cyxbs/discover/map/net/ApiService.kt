@@ -5,10 +5,9 @@ import com.mredrock.cyxbs.discover.map.bean.BasicMapData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData
 import com.mredrock.cyxbs.discover.map.bean.PlaceDetail
 import io.reactivex.Observable
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import okhttp3.ResponseBody
+import retrofit2.http.*
+
 
 interface ApiService {
     @GET("hot")
@@ -36,4 +35,12 @@ interface ApiService {
     @FormUrlEncoded
     @POST("addhot")
     fun addHot(@Field("id") placeId: Int): Observable<RedrockApiWrapper<PlaceDetail>>
+
+    /**
+     * 下载文件
+     */
+    @Streaming
+    @GET
+    fun downloadMap(@Url url: String): Observable<ResponseBody>
+
 }
