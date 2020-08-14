@@ -45,6 +45,7 @@ import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
 import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.database.PlaceDatabase
+import com.mredrock.cyxbs.discover.map.model.MapDataModel
 import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil
 import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil.getProgressBar
 import com.mredrock.cyxbs.discover.map.view.adapter.ClassifyAdapter
@@ -374,8 +375,8 @@ class MapActivity : BaseActivity() {
                 this@MapActivity.iv_map.setBackgroundColor(Color.parseColor(mapBackgroundColor))
 
                 val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
-//                if (File(mapPath).exists() && PlaceData.mapData.mapTimeStamp >= mapTimeStamp) {
-                if (File(mapPath).exists()) {
+                MapDataModel.loadMapData()
+               if (File(mapPath).exists() && PlaceData.mapData.mapTimeStamp >= mapTimeStamp) {
                     this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
                 } else {
                     viewModel.getMap()
@@ -606,4 +607,5 @@ class MapActivity : BaseActivity() {
         }
         return -1
     }
+
 }

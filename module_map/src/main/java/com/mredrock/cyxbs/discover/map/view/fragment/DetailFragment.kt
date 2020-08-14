@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -18,11 +17,11 @@ import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.invisible
 import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
+import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.databinding.MapFragmentDetailBinding
 import com.mredrock.cyxbs.discover.map.util.MapAlertDialogUtil
 import com.mredrock.cyxbs.discover.map.util.MapAlertDialogUtil.setOnClickListener
-import com.mredrock.cyxbs.discover.map.view.activity.CollectActivity
 import com.mredrock.cyxbs.discover.map.view.activity.ShowAllPicActivity
 import com.mredrock.cyxbs.discover.map.view.adapter.DetailViewPageAdapter
 import com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel
@@ -38,6 +37,8 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
     override val viewModelClass = DetailViewModel::class.java
     lateinit var mView: View
     lateinit var tvName: TextView
+    lateinit var vpAdapter: DetailViewPageAdapter
+    lateinit var curPlace: Place
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -58,7 +59,10 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         if (placeId != -1) {
             for (i: Int in PlaceData.placeList.indices) {
                 if (PlaceData.placeList[i].placeId == placeId) {
-                    viewModel.placeName.set(PlaceData.placeList[i].placeName)
+                    curPlace = PlaceData.placeList[i]
+                    viewModel.placeName.set(curPlace.placeName)
+                    viewModel.curPlace = curPlace
+                    viewModel.setDetail(WeakReference(ll_map_icon_container), WeakReference(chip_group_detail_container), vpAdapter)
                 }
             }
         }
@@ -66,9 +70,9 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.setIcon(WeakReference(view.findViewById(R.id.ll_map_icon_container)), listOf("操场", "活动中心"))
-        viewModel.setDetails(WeakReference(view.findViewById(R.id.chip_group_detail_container)), listOf("热爱跑步的请进", "太强了跑步的涛哥", "张涛男神出没", "卑微张煜在线减肥"))
-        val vpAdapter = DetailViewPageAdapter()
+        //viewModel.setIcon(WeakReference(view.findViewById(R.id.ll_map_icon_container)), listOf("操场", "活动中心"))
+        // viewModel.setDetails(WeakReference(view.findViewById(R.id.chip_group_detail_container)), listOf("热爱跑步的请进", "太强了跑步的涛哥", "张涛男神出没", "卑微张煜在线减肥"))
+        vpAdapter = DetailViewPageAdapter()
         map_viewpager.adapter = vpAdapter
         map_viewpager.pageMargin = 24
         viewModel.setDetailPic(vpAdapter, listOf())
@@ -76,14 +80,31 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         if (placeId != -1) {
             for (i: Int in PlaceData.placeList.indices) {
                 if (PlaceData.placeList[i].placeId == placeId) {
-                    viewModel.placeName.set(PlaceData.placeList[i].placeName)
+                    curPlace = PlaceData.placeList[i]
+                    viewModel.placeName.set(curPlace.placeName)
+                    viewModel.curPlace = curPlace
+                    viewModel.setDetail(WeakReference(ll_map_icon_container), WeakReference(chip_group_detail_container), vpAdapter)
                 }
             }
         }
 
-        map_iv_start.setOnClickListener {
-            //举例，传入地点ID加载收藏界面
-            context?.let { it1 -> CollectActivity.actionStart(it1, placeId) }
+        map_iv_keep.setOnClickListener {
+            if (curPlace.isCollected) {
+                context?.let {
+                    val dialog: AlertDialog = MapAlertDialogUtil.getMapAlertDialog(it, "取消收藏",
+                            "是否将该地点从“我的收藏”中移出")
+                    dialog.setOnClickListener(
+                            View.OnClickListener {
+                                dialog.cancel()
+                            } ,
+                            View.OnClickListener {
+                                viewModel.delKeep(WeakReference(map_iv_keep))
+                            }
+                    ).show()
+                }
+            } else {
+                viewModel.addKeep(WeakReference(map_iv_keep))
+            }
         }
 
         //进行测试，此处随便给了几个url

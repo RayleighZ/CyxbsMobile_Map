@@ -11,6 +11,7 @@ class MapModel {
     }
 
     fun saveFile(responseBody: ResponseBody, filePath: String) {
+        MapDataModel.saveMapData()
         var downloadByte: Long = 0
         val file = File(filePath)
         if (!file.exists()) {

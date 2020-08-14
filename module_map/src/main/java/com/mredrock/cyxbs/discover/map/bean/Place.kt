@@ -10,7 +10,7 @@ import androidx.room.TypeConverters
  */
 @Entity(primaryKeys = ["placeId"], tableName = "places")
 class Place : Serializable {
-    var isCollect: Boolean = false
+    var isCollected: Boolean = false
 
     @SerializedName("place_name")
     var placeName: String? = null

@@ -1,5 +1,6 @@
 package com.mredrock.cyxbs.discover.map.bean
 
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -33,6 +34,7 @@ class BasicMapData : Serializable {
 }
 
 //目前只在全局数据PlaceData类使用
+@Entity(primaryKeys = ["picture_version"], tableName = "mapdatas")
 class MapData : Serializable {
     @SerializedName("map_url")
     var mapUrl: String? = null
@@ -51,4 +53,7 @@ class MapData : Serializable {
 
     @SerializedName("picture_version")
     var mapTimeStamp: Long = 0
+
+    //""表示当前图片没有进行本地存储
+    var localPath : String = ""
 }

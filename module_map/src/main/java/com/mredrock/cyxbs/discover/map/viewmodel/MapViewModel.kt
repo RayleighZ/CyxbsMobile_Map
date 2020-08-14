@@ -13,6 +13,7 @@ import com.mredrock.cyxbs.common.viewmodel.event.ProgressDialogEvent
 import com.mredrock.cyxbs.discover.map.bean.BasicMapData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData
 import com.mredrock.cyxbs.discover.map.config.PlaceData
+import com.mredrock.cyxbs.discover.map.model.MapDataModel
 import com.mredrock.cyxbs.discover.map.model.MapModel
 import com.mredrock.cyxbs.discover.map.net.ApiService
 import com.mredrock.cyxbs.discover.map.net.DownloadListener
@@ -157,6 +158,7 @@ class MapViewModel : BaseViewModel() {
                     }
 
                     override fun onComplete() {
+
                     }
                 })
 

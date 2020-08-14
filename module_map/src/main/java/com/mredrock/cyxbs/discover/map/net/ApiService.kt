@@ -1,8 +1,11 @@
 package com.mredrock.cyxbs.discover.map.net
 
+import androidx.databinding.ObservableField
+import com.mredrock.cyxbs.common.bean.RedrockApiStatus
 import com.mredrock.cyxbs.common.bean.RedrockApiWrapper
 import com.mredrock.cyxbs.discover.map.bean.BasicMapData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData
+import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
 import com.mredrock.cyxbs.discover.map.bean.PlaceDetail
 import io.reactivex.Observable
 import okhttp3.ResponseBody
@@ -12,6 +15,10 @@ import retrofit2.http.*
 interface ApiService {
     @GET("hot")
     fun getHot(): Observable<RedrockApiWrapper<String>>
+
+    //获得收藏
+    @GET("rockmap/collect")
+    fun getCollect() : ObservableField<RedrockApiWrapper<FavoritePlace>>
 
     //搜索下方按钮
     @GET("button")
@@ -35,6 +42,15 @@ interface ApiService {
     @FormUrlEncoded
     @POST("addhot")
     fun addHot(@Field("id") placeId: Int): Observable<RedrockApiWrapper<PlaceDetail>>
+
+    //增加收藏
+    @FormUrlEncoded
+    @PATCH("rockmap/addkeep")
+    fun addKeep(@Field("place_id") placeId : Int) : Observable<RedrockApiStatus>
+
+    //删除收藏
+    @DELETE("rockmap/deletekeep")
+    fun delKeep(@Field("place_id") placeId : Int) : Observable<RedrockApiStatus>
 
     /**
      * 下载文件

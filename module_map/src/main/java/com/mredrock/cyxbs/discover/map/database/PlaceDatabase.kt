@@ -23,7 +23,7 @@ abstract class PlaceDatabase : RoomDatabase(){
             }
 
             return Room.databaseBuilder(context.applicationContext,
-                    PlaceDatabase :: class.java ,"app_database"
+                    PlaceDatabase :: class.java ,"app_placedata_database"
             ).build().apply {
                 instance = this
             }
