@@ -61,6 +61,7 @@ class SearchAdapter(
                 fragment.activity?.run {
                     supportFragmentManager.popBackStackImmediate("searchFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
                     if (this is MapActivity) {
+                        this.addHot(item.placeId)
                         this.removeAllPin()
                         this.pinAndZoomIn(item.placeCenterX, item.placeCenterY, item.placeId)
                         this.hideKeyBoard()
@@ -85,6 +86,7 @@ class SearchAdapter(
                 fragment.activity?.run {
                     supportFragmentManager.popBackStack()
                     if (this is MapActivity) {
+                        this.addHot(item.placeId)
                         this.removeAllPin()
                         this.pinAndZoomIn(item.placeCenterX, item.placeCenterY, item.placeId)
                         this.hideKeyBoard()

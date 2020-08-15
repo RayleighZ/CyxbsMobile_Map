@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.ui.BaseViewModelFragment
+import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.invisible
 import com.mredrock.cyxbs.common.utils.extensions.visible
@@ -63,6 +64,12 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
                     viewModel.placeName.set(curPlace.placeName)
                     viewModel.curPlace = curPlace
                     viewModel.setDetail(WeakReference(ll_map_icon_container), WeakReference(chip_group_detail_container), vpAdapter)
+
+                    if (curPlace.isCollected) {
+                        map_iv_keep.setImageResource(R.drawable.map_ic_collected)
+                    } else {
+                        map_iv_keep.setImageResource(R.drawable.map_ic_stared)
+                    }
                 }
             }
         }
@@ -77,16 +84,7 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         map_viewpager.pageMargin = 24
         viewModel.setDetailPic(vpAdapter, listOf())
         tv_map_place_name.isSelected = true
-        if (placeId != -1) {
-            for (i: Int in PlaceData.placeList.indices) {
-                if (PlaceData.placeList[i].placeId == placeId) {
-                    curPlace = PlaceData.placeList[i]
-                    viewModel.placeName.set(curPlace.placeName)
-                    viewModel.curPlace = curPlace
-                    viewModel.setDetail(WeakReference(ll_map_icon_container), WeakReference(chip_group_detail_container), vpAdapter)
-                }
-            }
-        }
+        refresh(placeId)
 
         map_iv_keep.setOnClickListener {
             if (curPlace.isCollected) {
@@ -96,8 +94,9 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
                     dialog.setOnClickListener(
                             View.OnClickListener {
                                 dialog.cancel()
-                            } ,
+                            },
                             View.OnClickListener {
+                                dialog.cancel()
                                 viewModel.delKeep(WeakReference(map_iv_keep))
                             }
                     ).show()

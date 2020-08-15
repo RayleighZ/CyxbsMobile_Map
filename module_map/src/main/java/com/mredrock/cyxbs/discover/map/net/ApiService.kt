@@ -13,44 +13,45 @@ import retrofit2.http.*
 
 
 interface ApiService {
-    @GET("hot")
+    @GET("wxapi/magipoke-stumap/hot")
     fun getHot(): Observable<RedrockApiWrapper<String>>
 
     //获得收藏
-    @GET("rockmap/collect")
-    fun getCollect() : ObservableField<RedrockApiWrapper<FavoritePlace>>
+    @GET("wxapi/magipoke-stumap/rockmap/collect")
+    fun getCollect() : Observable<RedrockApiWrapper<List<FavoritePlace>>>
 
     //搜索下方按钮
-    @GET("button")
+    @GET("wxapi/magipoke-stumap/button")
     fun getButton(): Observable<RedrockApiWrapper<ClassifyData>>
 
-    @GET("basic")
+    @GET("wxapi/magipoke-stumap/basic")
     fun getBasicMapData(): Observable<RedrockApiWrapper<BasicMapData>>
 
     //搜索下方分类的内容
     @FormUrlEncoded
-    @POST("searchtype")
+    @POST("wxapi/magipoke-stumap/searchtype")
     fun getClassifyInfoList(@Field("code") code: String): Observable<RedrockApiWrapper<List<Int>>>
 
     //详细地点
     @FormUrlEncoded
-    @POST("detailsite")
+    @POST("wxapi/magipoke-stumap/detailsite")
     fun getDetail(@Field("place_id") placeId: Int): Observable<RedrockApiWrapper<PlaceDetail>>
 
     //返回服务器搜索的id
     // TODO: 2020/8/12 0012 返回Json没写
     @FormUrlEncoded
-    @POST("addhot")
-    fun addHot(@Field("id") placeId: Int): Observable<RedrockApiWrapper<PlaceDetail>>
+    @POST("wxapi/magipoke-stumap/addhot")
+    fun addHot(@Field("id") placeId: Int): Observable<RedrockApiStatus>
 
     //增加收藏
     @FormUrlEncoded
-    @PATCH("rockmap/addkeep")
-    fun addKeep(@Field("place_id") placeId : Int) : Observable<RedrockApiStatus>
+    @PATCH("wxapi/magipoke-stumap/rockmap/addkeep")
+    fun addKeep(@Field("place_id") placeId : Int,@Field("place_nickname") placeNickname : String) : Observable<RedrockApiStatus>
 
     //删除收藏
-    @DELETE("rockmap/deletekeep")
-    fun delKeep(@Field("place_id") placeId : Int) : Observable<RedrockApiStatus>
+    @Multipart
+    @HTTP(method = "DELETE", path = "wxapi/magipoke-stumap/rockmap/deletekeep", hasBody = true)
+    fun delKeep(@Part("place_id") placeId : Int) : Observable<RedrockApiStatus>
 
     /**
      * 下载文件
