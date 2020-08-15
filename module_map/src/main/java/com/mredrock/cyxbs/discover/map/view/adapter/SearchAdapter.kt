@@ -13,6 +13,7 @@ import com.mredrock.cyxbs.common.component.CyxbsToast
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
+import com.mredrock.cyxbs.discover.map.model.PlaceModel
 import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
 import com.mredrock.cyxbs.discover.map.view.fragment.SearchFragment
 
@@ -51,6 +52,7 @@ class SearchAdapter(
                 //放到首位
                 for (i: Int in PlaceData.searchHistoryList.indices) {
                     if (PlaceData.searchHistoryList[i].placeId == item.placeId) {
+                        PlaceModel.delHistory(PlaceData.searchHistoryList[i].placeId)
                         PlaceData.searchHistoryList.removeAt(i)
                         break
                     }
@@ -61,6 +63,7 @@ class SearchAdapter(
                 fragment.activity?.run {
                     supportFragmentManager.popBackStackImmediate("searchFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
                     if (this is MapActivity) {
+                        this.addHot(item.placeId)
                         this.removeAllPin()
                         this.pinAndZoomIn(item.placeCenterX, item.placeCenterY, item.placeId)
                         this.hideKeyBoard()
@@ -75,16 +78,19 @@ class SearchAdapter(
                 //放到首位
                 for (i: Int in PlaceData.searchHistoryList.indices) {
                     if (PlaceData.searchHistoryList[i].placeId == item.placeId) {
+                        PlaceModel.delHistory(PlaceData.searchHistoryList[i].placeId)
                         PlaceData.searchHistoryList.removeAt(i)
                         break
                     }
                 }
                 PlaceData.searchHistoryList.add(0, item)
+                PlaceModel.insertHistory(item)
                 fragment.historyAdapter.notifyDataSetChanged()
 
                 fragment.activity?.run {
                     supportFragmentManager.popBackStack()
                     if (this is MapActivity) {
+                        this.addHot(item.placeId)
                         this.removeAllPin()
                         this.pinAndZoomIn(item.placeCenterX, item.placeCenterY, item.placeId)
                         this.hideKeyBoard()
@@ -95,6 +101,7 @@ class SearchAdapter(
 
             holder.ivDelete.setOnClickListener {
                 PlaceData.searchHistoryList.remove(item)
+                PlaceModel.delHistory(item.placeId)
                 notifyItemRemoved(position)
                 CyxbsToast.makeText(BaseApp.context, "点击：${item.placeName}删除", Toast.LENGTH_SHORT)
             }

@@ -20,28 +20,24 @@ class MapDataModel {
         const val SP_NAME = "model_map_map_info"
         fun saveMapData(){
             BaseApp.context.sharedPreferences(SP_NAME).editor {
-                val baos = ByteArrayOutputStream()
-                try {
-                    val oos = ObjectOutputStream(baos)
-                    oos.writeObject(PlaceData.mapData)
-                    putString("mapData" ,String(baos.toByteArray()))
-                } catch (e : Exception){
-                    e.printStackTrace()
-                }
+                putString("map_url" , PlaceData.mapData.mapUrl)
+                putFloat("map_width" , PlaceData.mapData.mapWidth)
+                putFloat("map_height" , PlaceData.mapData.mapHeight)
+                putString("map_background_color" , PlaceData.mapData.mapBackgroundColor)
+                putInt("open_site" ,PlaceData.mapData.zoomInId)
+                putLong("picture_version" , PlaceData.mapData.mapTimeStamp)
             }
         }
 
         fun loadMapData(){
-            val baseString = BaseApp.context.sharedPreferences(SP_NAME).getString("mapData" , "")
-            if (baseString == "")
-                return
-            try {
-                val bais = baseString.byteInputStream()
-                val bis = ObjectInputStream(bais)
-                PlaceData.mapData = bis.readObject() as MapData
-            } catch (e : java.lang.Exception){
-                e.printStackTrace()
-            }
+            val sp =
+            BaseApp.context.sharedPreferences(SP_NAME)
+            PlaceData.mapData.mapUrl = sp.getString("map_url" , "")
+            PlaceData.mapData.mapWidth = sp.getFloat("map_width" , 0F)
+            PlaceData.mapData.mapHeight = sp.getFloat("map_height" , 0F)
+            PlaceData.mapData.mapBackgroundColor = sp.getString("map_background_color" , null)
+            PlaceData.mapData.zoomInId = sp.getInt("open_site" , 1)
+            PlaceData.mapData.mapTimeStamp = sp.getLong("picture_version" , 0)
         }
     }
 }

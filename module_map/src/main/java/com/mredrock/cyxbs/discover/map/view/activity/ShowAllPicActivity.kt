@@ -7,7 +7,10 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.mredrock.cyxbs.common.ui.BaseActivity
+import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
+import com.mredrock.cyxbs.common.utils.extensions.invisible
+import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.view.adapter.PhotoStreamAdapter
 import kotlinx.android.synthetic.main.map_activity_show_all_pic.*
@@ -29,14 +32,16 @@ class ShowAllPicActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_activity_show_all_pic)
 
+
+
         initStatusBar()
 
         val urls = intent.getStringArrayExtra("urls")
         if (urls.isEmpty()){
-            rv_map_allpic_show_photo.setBackgroundResource(R.drawable.common_place_holder)
-            tv_map_allpic_no_more.visibility = View.VISIBLE
+            tv_map_allpic_no_more.visible()
         } else {
-            tv_map_allpic_no_more.visibility = View.GONE
+            iv_map_placeholder.invisible()
+            tv_map_allpic_no_more.invisible()
             rv_map_allpic_show_photo.adapter = PhotoStreamAdapter(urls , this)
 
             rv_map_allpic_show_photo.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -45,7 +50,9 @@ class ShowAllPicActivity : BaseActivity() {
 
     private fun initStatusBar(){
         val statusBarLinearParams = view_map_allpic_status_bar.layoutParams
+        //LogUtils.d("ShowAllPicActivity" , "hight is"+getStatusBarHeight().toString())
         statusBarLinearParams.height = getStatusBarHeight()
         view_map_allpic_status_bar.layoutParams = statusBarLinearParams
+        LogUtils.d("ShowAllPicActivity" , "hight is"+getStatusBarHeight().toString())
     }
 }

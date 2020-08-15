@@ -28,3 +28,14 @@ object DownloadProgressDialogUtil {
         return pbProgress
     }
 }
+
+fun isOnlineByPing(ipAddress: String): Boolean {
+    try {
+        val process = Runtime.getRuntime().exec("/system/bin/ping -c 1 -w 5000 $ipAddress")
+        val status = process.waitFor()
+        return status == 0
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return false
+}

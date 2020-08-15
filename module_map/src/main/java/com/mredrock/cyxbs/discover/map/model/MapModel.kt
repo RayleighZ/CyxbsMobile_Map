@@ -1,5 +1,11 @@
 package com.mredrock.cyxbs.discover.map.model
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.mredrock.cyxbs.common.BaseApp
+import com.mredrock.cyxbs.common.component.CyxbsToast
 import okhttp3.ResponseBody
 import java.io.File
 import java.io.RandomAccessFile
@@ -11,7 +17,18 @@ class MapModel {
     }
 
     fun saveFile(responseBody: ResponseBody, filePath: String) {
-        MapDataModel.saveMapData()
+        if (ContextCompat.checkSelfPermission(
+                        BaseApp.context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                        BaseApp.context,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            CyxbsToast.makeText(BaseApp.context, "无存储权限，操作失败", Toast.LENGTH_LONG).show()
+            return
+        }
         var downloadByte: Long = 0
         val file = File(filePath)
         if (!file.exists()) {

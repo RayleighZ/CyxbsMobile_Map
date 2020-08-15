@@ -10,8 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.activity.ShowAllPicActivity"></activity>
-        <activity android:name=".view.activity.CollectActivity" />
+        <activity
+            android:name=".view.activity.ShowAllPicActivity"
+            android:theme="@style/AppTheme.TranslucentStatus">
+        </activity>
         <activity
             android:name=".view.activity.MapActivity"
             android:theme="@style/AppTheme.TranslucentStatus">

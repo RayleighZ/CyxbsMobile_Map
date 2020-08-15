@@ -10,7 +10,7 @@
     <View
         android:id="@+id/view_map_allpic_status_bar"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,27 +25,26 @@
         android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/view_map_allpic_status_bar"
+        app:layout_constraintTop_toBottomOf="@id/view_map_allpic_status_bar"
         app:map_typeface="PFSCHTypeface" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_map_allpic_show_photo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="105.5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map_typefacetextview" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19.5dp"
+        app:layout_constraintTop_toBottomOf="@+id/map_typefacetextview"
+        tools:layout_editor_absoluteX="-16dp" />
 
-    <Button
-        android:id="@+id/bt_map_allpic_back"
+    <ImageView
+        android:id="@+id/iv_map_allpic_back"
         android:layout_width="7.5dp"
         android:layout_height="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="14.5dp"
-        android:background="@drawable/map_ic_back"
+        android:src="@drawable/map_ic_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/view_map_allpic_status_bar" />
+        app:layout_constraintTop_toBottomOf="@id/view_map_allpic_status_bar" />
 
     <ImageView
         android:id="@+id/iv_map_allpic_share"
@@ -67,8 +66,21 @@
         android:textColor="@color/map_activity_showpic_share_words_hight_blue"
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/view_map_allpic_status_bar"
+        app:layout_constraintTop_toBottomOf="@id/view_map_allpic_status_bar"
         app:map_typeface="PFSCHTypeface" />
+
+    <ImageView
+        android:id="@+id/iv_map_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="19.5dp"
+        android:layout_marginEnd="15dp"
+        android:scaleType="fitStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map_typefacetextview"
+        app:srcCompat="@drawable/map_ic_none_pic_place_holder" />
 
     <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
         android:id="@+id/tv_map_allpic_no_more"

@@ -3,6 +3,7 @@ package com.mredrock.cyxbs.discover.map.viewmodel
 import android.os.Environment
 import androidx.lifecycle.MutableLiveData
 import com.mredrock.cyxbs.common.BuildConfig
+import com.mredrock.cyxbs.common.config.END_POINT_REDROCK
 import com.mredrock.cyxbs.common.network.ApiGenerator
 import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.common.utils.extensions.mapOrThrowApiException
@@ -12,9 +13,11 @@ import com.mredrock.cyxbs.common.viewmodel.BaseViewModel
 import com.mredrock.cyxbs.common.viewmodel.event.ProgressDialogEvent
 import com.mredrock.cyxbs.discover.map.bean.BasicMapData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData
+import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
+import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
-import com.mredrock.cyxbs.discover.map.model.MapDataModel
 import com.mredrock.cyxbs.discover.map.model.MapModel
+import com.mredrock.cyxbs.discover.map.model.PlaceModel
 import com.mredrock.cyxbs.discover.map.net.ApiService
 import com.mredrock.cyxbs.discover.map.net.DownloadListener
 import com.mredrock.cyxbs.discover.map.net.ProgressInterceptor
@@ -46,13 +49,10 @@ class MapViewModel : BaseViewModel() {
     var mBasicMapData = MutableLiveData<BasicMapData>()
     var mDownloadProgress: MutableLiveData<Float> = MutableLiveData()
     var mMapPath: MutableLiveData<String> = MutableLiveData()
+    var mCollect = MutableLiveData<List<FavoritePlace>>()
 
-    fun showPinByType(check: String) {
-
-    }
-
-    fun retrofitConfigFun(builder: Retrofit.Builder): Retrofit.Builder {
-        builder.baseUrl("http://118.31.20.31:8080/")
+    fun getRetrofitConfig(builder: Retrofit.Builder): Retrofit.Builder {
+        builder.baseUrl(END_POINT_REDROCK)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         return builder
@@ -69,29 +69,27 @@ class MapViewModel : BaseViewModel() {
         return builder
     }
 
-    fun okHttpClientDownloadConfigFun(builder: okhttp3.OkHttpClient.Builder): okhttp3.OkHttpClient.Builder {
+    fun getOkHttpClientDownloadConfig(builder: okhttp3.OkHttpClient.Builder): okhttp3.OkHttpClient.Builder {
         builder.run {
             if (BuildConfig.DEBUG) {
                 val logging = HttpLoggingInterceptor()
                 logging.level = HttpLoggingInterceptor.Level.BODY
                 addInterceptor(logging)
-                addInterceptor(ProgressInterceptor(object : DownloadListener {
-                    override fun progress(url: String, bytesRead: Long, contentLength: Long, done: Boolean) {
-                        mDownloadProgress.postValue((bytesRead.toDouble() / contentLength).toFloat())
-                        if (done) {
-                            mMapPath.postValue(Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg")
-                        }
-                    }
-                }))
             }
+            addInterceptor(ProgressInterceptor(object : DownloadListener {
+                override fun progress(url: String, bytesRead: Long, contentLength: Long, done: Boolean) {
+                    this@MapViewModel.mDownloadProgress.postValue((bytesRead.toDouble() / contentLength).toFloat())
+                    if (done) {
+                        this@MapViewModel.mMapPath.postValue(Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg")
+                    }
+                }
+            }))
         }
         return builder
     }
 
     fun getClassify() {
-        ApiGenerator.registerNetSettings(999, { builder -> retrofitConfigFun(builder) }
-                , { builder -> okHttpClientConfigFun(builder) }, true)
-        ApiGenerator.getApiService(999, ApiService::class.java)
+        ApiGenerator.getApiService(ApiService::class.java)
                 .getButton()
                 .mapOrThrowApiException()
                 .setSchedulers()
@@ -103,9 +101,7 @@ class MapViewModel : BaseViewModel() {
     }
 
     fun getHot() {
-        ApiGenerator.registerNetSettings(999, { builder -> retrofitConfigFun(builder) }
-                , { builder -> okHttpClientConfigFun(builder) }, true)
-        ApiGenerator.getApiService(999, ApiService::class.java)
+        ApiGenerator.getApiService(ApiService::class.java)
                 .getHot()
                 .mapOrThrowApiException()
                 .setSchedulers()
@@ -117,9 +113,7 @@ class MapViewModel : BaseViewModel() {
     }
 
     fun getBasicMapData() {
-        ApiGenerator.registerNetSettings(999, { builder -> retrofitConfigFun(builder) }
-                , { builder -> okHttpClientConfigFun(builder) }, true)
-        ApiGenerator.getApiService(999, ApiService::class.java)
+        ApiGenerator.getApiService(ApiService::class.java)
                 .getBasicMapData()
                 .mapOrThrowApiException()
                 .setSchedulers()
@@ -130,10 +124,22 @@ class MapViewModel : BaseViewModel() {
                 }.lifeCycle()
     }
 
+    fun getCollect() {
+        ApiGenerator.getApiService(ApiService::class.java)
+                .getCollect()
+                .mapOrThrowApiException()
+                .setSchedulers()
+                .doFinally { progressDialogEvent.value = ProgressDialogEvent.DISMISS_DIALOG_EVENT }
+                .doOnSubscribe { progressDialogEvent.value = ProgressDialogEvent.SHOW_NONCANCELABLE_DIALOG_EVENT }
+                .safeSubscribeBy {
+                    mCollect.value = it
+                }.lifeCycle()
+    }
+
     fun getMap() {
-        ApiGenerator.registerNetSettings(999, { builder -> retrofitConfigFun(builder) }
-                , { builder -> okHttpClientDownloadConfigFun(builder) }, true)
-        ApiGenerator.getApiService(999, ApiService::class.java)
+        ApiGenerator.registerNetSettings(20200815, { builder -> getRetrofitConfig(builder) }
+                , { builder -> getOkHttpClientDownloadConfig(builder) }, true)
+        ApiGenerator.getApiService(20200815, ApiService::class.java)
                 .downloadMap(PlaceData.mapData.mapUrl ?: "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -162,5 +168,32 @@ class MapViewModel : BaseViewModel() {
                     }
                 })
 
+    }
+
+    fun addHot(placeId: Int) {
+        ApiGenerator.getApiService(ApiService::class.java)
+                .addHot(placeId)
+                .setSchedulers()
+                .doFinally { progressDialogEvent.value = ProgressDialogEvent.DISMISS_DIALOG_EVENT }
+                .doOnSubscribe { progressDialogEvent.value = ProgressDialogEvent.SHOW_NONCANCELABLE_DIALOG_EVENT }
+                .safeSubscribeBy {
+                    if (it.status == 200) {
+                        LogUtils.d(TAG, "add hot success")
+                    } else {
+                        LogUtils.w(TAG, "add hot status is ${it.status}")
+                    }
+                }.lifeCycle()
+    }
+
+    fun pinByType(type : String , pinFun : (placeId : List<Int>) -> Unit){
+        ApiGenerator.getApiService(ApiService::class.java)
+                .getClassifyInfoList(type)
+                .mapOrThrowApiException()
+                .setSchedulers()
+                .doFinally { progressDialogEvent.value = ProgressDialogEvent.DISMISS_DIALOG_EVENT }
+                .doOnSubscribe { progressDialogEvent.value = ProgressDialogEvent.SHOW_NONCANCELABLE_DIALOG_EVENT }
+                .safeSubscribeBy {
+                    pinFun(it)
+                }.lifeCycle()
     }
 }

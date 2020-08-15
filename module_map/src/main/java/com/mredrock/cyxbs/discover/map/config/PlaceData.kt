@@ -8,4 +8,5 @@ object PlaceData {
     var collectPlaceList: MutableList<Place> = ArrayList()
     var searchHistoryList: MutableList<Place> = ArrayList()
     var mapData: MapData = MapData()
+    const val BASE_URL = "https://cyxbsmobile.redrock.team/"
 }

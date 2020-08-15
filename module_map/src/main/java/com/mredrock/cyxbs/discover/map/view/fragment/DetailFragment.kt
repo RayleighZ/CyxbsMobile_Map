@@ -63,6 +63,12 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
                     viewModel.placeName.set(curPlace.placeName)
                     viewModel.curPlace = curPlace
                     viewModel.setDetail(WeakReference(ll_map_icon_container), WeakReference(chip_group_detail_container), vpAdapter)
+
+                    if (curPlace.isCollected) {
+                        map_iv_keep.setImageResource(R.drawable.map_ic_collected)
+                    } else {
+                        map_iv_keep.setImageResource(R.drawable.map_ic_stared)
+                    }
                 }
             }
         }
@@ -77,16 +83,7 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         map_viewpager.pageMargin = 24
         viewModel.setDetailPic(vpAdapter, listOf())
         tv_map_place_name.isSelected = true
-        if (placeId != -1) {
-            for (i: Int in PlaceData.placeList.indices) {
-                if (PlaceData.placeList[i].placeId == placeId) {
-                    curPlace = PlaceData.placeList[i]
-                    viewModel.placeName.set(curPlace.placeName)
-                    viewModel.curPlace = curPlace
-                    viewModel.setDetail(WeakReference(ll_map_icon_container), WeakReference(chip_group_detail_container), vpAdapter)
-                }
-            }
-        }
+        refresh(placeId)
 
         map_iv_keep.setOnClickListener {
             if (curPlace.isCollected) {
@@ -96,8 +93,9 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
                     dialog.setOnClickListener(
                             View.OnClickListener {
                                 dialog.cancel()
-                            } ,
+                            },
                             View.OnClickListener {
+                                dialog.cancel()
                                 viewModel.delKeep(WeakReference(map_iv_keep))
                             }
                     ).show()
@@ -107,9 +105,11 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
             }
         }
 
-        //进行测试，此处随便给了几个url
         map_tv_show_maore_pic.setOnClickListener {
-            context?.let { it1 -> ShowAllPicActivity.actionStart(it1, arrayOf("https://bihu-head.oss-cn-chengdu.aliyuncs.com/Eva3.jpg", "https://bihu-head.oss-cn-chengdu.aliyuncs.com/eva.png", "https://image.baidu.com/search/detail?ct=503316480&z=undefined&tn=baiduimagedetail&ipn=d&word=%E8%8A%9C%E6%B9%96%E5%A4%A7%E5%8F%B8%E9%A9%AC&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=undefined&hd=undefined&latest=undefined&copyright=undefined&cs=1885695158,4148174646&os=1488174142,779019841&simid=3601840413,379195290&pn=0&rn=1&di=154770&ln=1036&fr=&fmq=1597312174758_R&fm=&ic=undefined&s=undefined&se=&sme=&tab=0&width=undefined&height=undefined&face=undefined&is=0,0&istype=0&ist=&jit=&bdtype=0&spn=0&pi=0&gsm=0&objurl=http%3A%2F%2Fpic1.zhimg.com%2F80%2Fv2-5cc7f1f5624d5d4ff89cf0da89f75cac_hd.jpg&rpstart=0&rpnum=0&adpicid=0&force=undefined")) }
+            context?.let { it1 ->
+                val arrayList = ArrayList<String>(viewModel.listOfPicUrls)
+                ShowAllPicActivity.actionStart(it1,arrayList.toTypedArray() )
+            }
         }
 
         //动态设置头部可见高度

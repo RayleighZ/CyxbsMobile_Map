@@ -53,7 +53,4 @@ class MapData : Serializable {
 
     @SerializedName("picture_version")
     var mapTimeStamp: Long = 0
-
-    //""表示当前图片没有进行本地存储
-    var localPath : String = ""
 }

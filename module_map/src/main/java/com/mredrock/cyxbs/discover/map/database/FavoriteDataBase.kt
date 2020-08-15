@@ -13,23 +13,23 @@ import com.mredrock.cyxbs.discover.map.bean.Place
  * @author Sca RayleighZ
  */
 
-@Database(version = 2, entities = [FavoritePlace::class])
+@Database(version = 2, entities = [Place::class])
 abstract class FavoriteDataBase : RoomDatabase(){
-    abstract fun getFavoriteDao(): CollectPlaceDao
+    abstract fun getFavoriteDao(): PlaceDao
 
     companion object {
         private var instance: FavoriteDataBase? = null
 
         @Synchronized
-        fun getDataBase(context: Context): FavoriteDataBase {
+        fun getDataBase(): FavoriteDataBase {
             instance?.let {
                 return it
             }
 
-            return Room.databaseBuilder(context.applicationContext,
+            return Room.databaseBuilder(BaseApp.context.applicationContext,
                     FavoriteDataBase :: class.java ,"app_favorite_database"
             ).build().apply {
-                FavoriteDataBase.instance = this
+                instance = this
             }
         }
     }

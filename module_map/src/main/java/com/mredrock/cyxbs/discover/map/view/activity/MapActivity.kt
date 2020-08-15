@@ -1,8 +1,11 @@
 package com.mredrock.cyxbs.discover.map.view.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.*
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
@@ -18,6 +21,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
@@ -34,6 +39,7 @@ import com.mredrock.cyxbs.common.component.CyxbsToast
 import com.mredrock.cyxbs.common.service.ServiceManager
 import com.mredrock.cyxbs.common.service.account.IAccountService
 import com.mredrock.cyxbs.common.ui.BaseActivity
+import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.common.utils.extensions.dp2px
 import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.gone
@@ -43,11 +49,14 @@ import com.mredrock.cyxbs.discover.map.bean.BasicMapData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
 import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
+import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.database.PlaceDatabase
 import com.mredrock.cyxbs.discover.map.model.MapDataModel
+import com.mredrock.cyxbs.discover.map.model.PlaceModel
 import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil
 import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil.getProgressBar
+import com.mredrock.cyxbs.discover.map.util.isOnlineByPing
 import com.mredrock.cyxbs.discover.map.view.adapter.ClassifyAdapter
 import com.mredrock.cyxbs.discover.map.view.adapter.FavoriteAdapter
 import com.mredrock.cyxbs.discover.map.view.fragment.DetailFragment
@@ -64,10 +73,12 @@ import kotlin.math.abs
 
 class MapActivity : BaseActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(MapViewModel::class.java) }
+    private val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
 
     //    private lateinit var popWindow: PopupWindow
     private val classifyItemList: MutableList<ClassifyPlace> = ArrayList()
-//    private val favoriteItemList: MutableList<FavoritePlace> = ArrayList()
+
+    //    private val favoriteItemList: MutableList<FavoritePlace> = ArrayList()
     private val classifyAdapter: ClassifyAdapter = ClassifyAdapter(this, classifyItemList)
 
     //    private val favoriteAdapter: FavoriteAdapter = FavoriteAdapter(this, favoriteItemList)
@@ -77,6 +88,7 @@ class MapActivity : BaseActivity() {
     private var downloadProgressDialog: AlertDialog? = null
     private var isCancelDownloadMap = false
     private var mapTimeStamp = 0L       //从服务器拿到的地图时间戳
+    private var needGetMap = 0
 
     override val isFragmentActivity = false
 
@@ -92,6 +104,7 @@ class MapActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        getPermissions()
         setContentView(R.layout.map_activity_map)
 
         val userState = ServiceManager.getService(IAccountService::class.java).getVerifyService()
@@ -171,13 +184,13 @@ class MapActivity : BaseActivity() {
 
         cl_map_favorite.setOnClickListener {
             //test data
-            PlaceData.collectPlaceList.add(PlaceData.placeList[0])
-            PlaceData.collectPlaceList.add(PlaceData.placeList[5])
-            PlaceData.collectPlaceList.add(PlaceData.placeList[30])
-            PlaceData.collectPlaceList.add(PlaceData.placeList[20])
-            PlaceData.collectPlaceList.add(PlaceData.placeList[13])
-            PlaceData.collectPlaceList.add(PlaceData.placeList[27])
-            PlaceData.collectPlaceList.add(PlaceData.placeList[10])
+//            PlaceData.collectPlaceList.add(PlaceData.placeList[0])
+//            PlaceData.collectPlaceList.add(PlaceData.placeList[5])
+//            PlaceData.collectPlaceList.add(PlaceData.placeList[30])
+//            PlaceData.collectPlaceList.add(PlaceData.placeList[20])
+//            PlaceData.collectPlaceList.add(PlaceData.placeList[13])
+//            PlaceData.collectPlaceList.add(PlaceData.placeList[27])
+//            PlaceData.collectPlaceList.add(PlaceData.placeList[10])
 
             if (PlaceData.collectPlaceList.size == 0) {
 //                popWindowView.rv_map_pop_window.gone()
@@ -296,8 +309,33 @@ class MapActivity : BaseActivity() {
 
         initObserver()
 
-        viewModel.getBasicMapData()
-        viewModel.getClassify()
+        //判断有无网络
+        if (true) {
+            viewModel.getBasicMapData()
+            viewModel.getClassify()
+        } else {
+            CyxbsToast.makeText(BaseApp.context, "无网络，加载本地数据", Toast.LENGTH_SHORT).show()
+            MapDataModel.loadMapData()
+            PlaceModel.loadCollect {
+                LogUtils.d("MapActivity" , PlaceData.collectPlaceList.size.toString())
+            }
+            PlaceModel.loadHistory {
+                LogUtils.d("MapActivity" , PlaceData.searchHistoryList.size.toString())
+            }
+            PlaceModel.loadPlace {
+                LogUtils.d("MapActivity" , PlaceData.placeList.size.toString())
+            }
+            this.mapTimeStamp = PlaceData.mapData.mapTimeStamp
+
+            iv_map.setBackgroundColor(Color.parseColor(PlaceData.mapData.mapBackgroundColor))
+
+            val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
+            if (File(mapPath).exists()) {
+                this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
+            } else {
+                CyxbsToast.makeText(BaseApp.context, "本地无地图数据", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun initObserver() {
@@ -311,7 +349,7 @@ class MapActivity : BaseActivity() {
                 }
 
             }
-            if (abs(it - 1) < 0.01 || it == 0f) {
+            if ((it * 100).toInt() >= 100 || it == 0f) {
                 downloadProgressDialog?.let { it1 ->
                     it1.hide()
                     downloadProgressDialog = null
@@ -353,6 +391,22 @@ class MapActivity : BaseActivity() {
             this@MapActivity.iv_map.setImage(ImageSource.uri(it))
         })
 
+        viewModel.mCollect.observe(this, Observer<List<FavoritePlace>> {
+            val placeIdList: MutableList<Int> = ArrayList()
+            for (i: Int in it.indices) {
+                placeIdList.add(it[i].placeId)
+            }
+            PlaceData.collectPlaceList.clear()
+            for (i: Int in PlaceData.placeList.indices) {
+                if (placeIdList.contains(PlaceData.placeList[i].placeId)) {
+                    PlaceData.placeList[i].isCollected = true
+                    PlaceData.collectPlaceList.add(PlaceData.placeList[i])
+                }
+            }
+            //存储所有的收藏地点
+            PlaceModel.saveAllCollect {  }
+        })
+
         viewModel.mBasicMapData.observe(this, Observer<BasicMapData> {
             it?.run {
                 if (hotWord != null && hotWord != "") {
@@ -370,16 +424,43 @@ class MapActivity : BaseActivity() {
                 PlaceData.mapData.mapWidth = mapWidth
                 PlaceData.mapData.mapUrl = mapUrl
                 PlaceData.mapData.zoomInId = zoomInId
+
+                PlaceModel.saveAllCollect {
+                    LogUtils.d("MapActivity" , "存储时内存中 collect"+PlaceData.collectPlaceList.size.toString())
+                }
+                PlaceModel.saveAllPlace {
+                    LogUtils.d("MapActivity" , "存储时内存中 place"+PlaceData.placeList.size.toString())
+                }
+                PlaceModel.saveAllHistory {
+                    LogUtils.d("MapActivity" , " 存储时内存中 history"+PlaceData.placeList.size.toString())
+                }
                 this@MapActivity.mapTimeStamp = mapTimeStamp
 
                 this@MapActivity.iv_map.setBackgroundColor(Color.parseColor(mapBackgroundColor))
 
                 val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
-                MapDataModel.loadMapData()
-               if (File(mapPath).exists() && PlaceData.mapData.mapTimeStamp >= mapTimeStamp) {
+                MapDataModel.saveMapData()
+
+                viewModel.getCollect()
+
+//                if (File(mapPath).exists() && PlaceData.mapData.mapTimeStamp >= mapTimeStamp) {
+                if (File(mapPath).exists()) {
                     this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
                 } else {
-                    viewModel.getMap()
+                    if (ContextCompat.checkSelfPermission(
+                                    BaseApp.context,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                            ) != PackageManager.PERMISSION_GRANTED ||
+                            ContextCompat.checkSelfPermission(
+                                    BaseApp.context,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        CyxbsToast.makeText(BaseApp.context, "无存储权限，操作失败", Toast.LENGTH_LONG).show()
+                    } else {
+                        needGetMap = 1
+                        viewModel.getMap()
+                    }
                 }
 
                 for (i: Int in PlaceData.placeList.indices) {
@@ -608,4 +689,68 @@ class MapActivity : BaseActivity() {
         return -1
     }
 
+    private fun getPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                        this, arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ), 1
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            1 -> if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                CyxbsToast.makeText(BaseApp.context, "无法获取存储权限，程序可能异常", Toast.LENGTH_LONG).show()
+            } else {
+                if (File(mapPath).exists()) {
+                    this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
+                } else {
+                    viewModel.getMap()
+                    needGetMap = 2
+                }
+            }
+        }
+    }
+
+    fun addHot(placeId: Int) {
+        viewModel.addHot(placeId)
+    }
+
+    override fun onDestroy() {
+        PlaceModel.saveAllCollect {
+            LogUtils.d("MapActivity" , "存储时内存中 collect"+PlaceData.collectPlaceList.size.toString())
+        }
+        PlaceModel.saveAllPlace {
+            LogUtils.d("MapActivity" , "存储时内存中 place"+PlaceData.placeList.size.toString())
+        }
+        PlaceModel.saveAllHistory {
+            LogUtils.d("MapActivity" , " 存储时内存中 history"+PlaceData.placeList.size.toString())
+        }
+        super.onDestroy()
+    }
+
+    fun pinByClassify(type : String){
+        viewModel.pinByType(type) {
+            for (place in PlaceData.placeList){
+                for (id in it){
+                    if (place.placeId == id){
+                        pin(place.placeCenterX , place.placeCenterY)
+                    }
+                }
+            }
+        }
+    }
 }
