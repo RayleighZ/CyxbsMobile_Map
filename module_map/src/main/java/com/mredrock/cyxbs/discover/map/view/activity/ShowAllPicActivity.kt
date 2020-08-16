@@ -14,6 +14,7 @@ import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.view.adapter.PhotoStreamAdapter
 import kotlinx.android.synthetic.main.map_activity_show_all_pic.*
+import org.jetbrains.anko.sdk27.coroutines.onClick
 
 class ShowAllPicActivity : BaseActivity() {
 
@@ -32,7 +33,9 @@ class ShowAllPicActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_activity_show_all_pic)
 
-
+        iv_map_allpic_back.onClick {
+            finish()
+        }
 
         initStatusBar()
 

@@ -16,16 +16,36 @@ abstract class HistoryDatabase : RoomDatabase(){
     companion object{
         private var instance : HistoryDatabase ?= null
         @Synchronized
-        fun getDataBase() : HistoryDatabase{
-            instance?.let {
-                return it
+        fun getDataBase(needToJoinIn : Boolean , whenGot : (HistoryDatabase) -> Unit  ){
+
+            if (!needToJoinIn){
+                instance?.let {
+                    Thread{
+                        whenGot(it)
+                    }.start()
+                    return
+                }
+
+                Thread{
+                    Room.databaseBuilder(BaseApp.context.applicationContext,
+                            HistoryDatabase :: class.java ,"app_history_database"
+                    ).build().apply {
+                        instance = this
+                        whenGot(this)
+                    }
+                }.start()
+
+                return
             }
 
-            return Room.databaseBuilder(BaseApp.context.applicationContext,
-                    HistoryDatabase :: class.java ,"app_history_database"
-            ).build().apply {
-                instance = this
-            }
+            Thread{
+                Room.databaseBuilder(BaseApp.context.applicationContext,
+                        HistoryDatabase :: class.java ,"app_history_database"
+                ).build().apply {
+                    instance = this
+                    whenGot(this)
+                }
+            }.start()
         }
     }
 }

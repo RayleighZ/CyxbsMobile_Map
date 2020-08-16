@@ -45,11 +45,8 @@ import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.gone
 import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
-import com.mredrock.cyxbs.discover.map.bean.BasicMapData
-import com.mredrock.cyxbs.discover.map.bean.ClassifyData
+import com.mredrock.cyxbs.discover.map.bean.*
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
-import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
-import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.database.PlaceDatabase
 import com.mredrock.cyxbs.discover.map.model.MapDataModel
@@ -107,6 +104,11 @@ class MapActivity : BaseActivity() {
         getPermissions()
         setContentView(R.layout.map_activity_map)
 
+        PlaceModel.loadAllData(false){
+            for (place in PlaceData.placeList){
+                place.placeName?.let { LogUtils.d("MainActivity" , it) }
+            }
+        }
         val userState = ServiceManager.getService(IAccountService::class.java).getVerifyService()
         if (!userState.isLogin()) {
             //这里只是模拟一下登录，如果有并发需求，自己设计
@@ -316,13 +318,13 @@ class MapActivity : BaseActivity() {
         } else {
             CyxbsToast.makeText(BaseApp.context, "无网络，加载本地数据", Toast.LENGTH_SHORT).show()
             MapDataModel.loadMapData()
-            PlaceModel.loadCollect {
+            PlaceModel.loadCollect(false) {
                 LogUtils.d("MapActivity" , PlaceData.collectPlaceList.size.toString())
             }
-            PlaceModel.loadHistory {
+            PlaceModel.loadHistory(false) {
                 LogUtils.d("MapActivity" , PlaceData.searchHistoryList.size.toString())
             }
-            PlaceModel.loadPlace {
+            PlaceModel.loadPlace(false) {
                 LogUtils.d("MapActivity" , PlaceData.placeList.size.toString())
             }
             this.mapTimeStamp = PlaceData.mapData.mapTimeStamp
@@ -404,7 +406,7 @@ class MapActivity : BaseActivity() {
                 }
             }
             //存储所有的收藏地点
-            PlaceModel.saveAllCollect {  }
+            PlaceModel.saveAllCollect(false) {  }
         })
 
         viewModel.mBasicMapData.observe(this, Observer<BasicMapData> {
@@ -425,13 +427,13 @@ class MapActivity : BaseActivity() {
                 PlaceData.mapData.mapUrl = mapUrl
                 PlaceData.mapData.zoomInId = zoomInId
 
-                PlaceModel.saveAllCollect {
+                PlaceModel.saveAllCollect(false) {
                     LogUtils.d("MapActivity" , "存储时内存中 collect"+PlaceData.collectPlaceList.size.toString())
                 }
-                PlaceModel.saveAllPlace {
+                PlaceModel.saveAllPlace(false) {
                     LogUtils.d("MapActivity" , "存储时内存中 place"+PlaceData.placeList.size.toString())
                 }
-                PlaceModel.saveAllHistory {
+                PlaceModel.saveAllHistory(false) {
                     LogUtils.d("MapActivity" , " 存储时内存中 history"+PlaceData.placeList.size.toString())
                 }
                 this@MapActivity.mapTimeStamp = mapTimeStamp
@@ -730,15 +732,20 @@ class MapActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        PlaceModel.saveAllCollect {
-            LogUtils.d("MapActivity" , "存储时内存中 collect"+PlaceData.collectPlaceList.size.toString())
-        }
-        PlaceModel.saveAllPlace {
-            LogUtils.d("MapActivity" , "存储时内存中 place"+PlaceData.placeList.size.toString())
-        }
-        PlaceModel.saveAllHistory {
-            LogUtils.d("MapActivity" , " 存储时内存中 history"+PlaceData.placeList.size.toString())
-        }
+
+        Thread{
+            PlaceModel.saveAllCollect(true) {
+                LogUtils.d("MapActivity" , "存储时内存中 collect"+PlaceData.collectPlaceList.size.toString())
+            }
+
+            PlaceModel.saveAllPlace (true){
+                LogUtils.d("MapActivity" , "存储时内存中 place"+PlaceData.placeList.size.toString())
+            }
+            PlaceModel.saveAllHistory (true){
+                LogUtils.d("MapActivity" , " 存储时内存中 history"+PlaceData.placeList.size.toString())
+            }
+        }.join()
+
         super.onDestroy()
     }
 

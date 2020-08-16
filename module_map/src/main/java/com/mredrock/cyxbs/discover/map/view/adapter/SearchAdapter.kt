@@ -52,7 +52,7 @@ class SearchAdapter(
                 //放到首位
                 for (i: Int in PlaceData.searchHistoryList.indices) {
                     if (PlaceData.searchHistoryList[i].placeId == item.placeId) {
-                        PlaceModel.delHistory(PlaceData.searchHistoryList[i].placeId)
+                        PlaceModel.delHistory( false , PlaceData.searchHistoryList[i].placeId)
                         PlaceData.searchHistoryList.removeAt(i)
                         break
                     }
@@ -78,13 +78,13 @@ class SearchAdapter(
                 //放到首位
                 for (i: Int in PlaceData.searchHistoryList.indices) {
                     if (PlaceData.searchHistoryList[i].placeId == item.placeId) {
-                        PlaceModel.delHistory(PlaceData.searchHistoryList[i].placeId)
+                        PlaceModel.delHistory(false , PlaceData.searchHistoryList[i].placeId)
                         PlaceData.searchHistoryList.removeAt(i)
                         break
                     }
                 }
                 PlaceData.searchHistoryList.add(0, item)
-                PlaceModel.insertHistory(item)
+                PlaceModel.insertHistory(false , item)
                 fragment.historyAdapter.notifyDataSetChanged()
 
                 fragment.activity?.run {
@@ -101,7 +101,7 @@ class SearchAdapter(
 
             holder.ivDelete.setOnClickListener {
                 PlaceData.searchHistoryList.remove(item)
-                PlaceModel.delHistory(item.placeId)
+                PlaceModel.delHistory( false , item.placeId)
                 notifyItemRemoved(position)
                 CyxbsToast.makeText(BaseApp.context, "点击：${item.placeName}删除", Toast.LENGTH_SHORT)
             }

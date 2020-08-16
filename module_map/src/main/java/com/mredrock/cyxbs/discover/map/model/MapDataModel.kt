@@ -3,12 +3,14 @@ package com.mredrock.cyxbs.discover.map.model
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.utils.extensions.editor
 import com.mredrock.cyxbs.common.utils.extensions.sharedPreferences
+import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.bean.MapData
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.lang.Exception
 
 /**
  * @date 2020-08-15
@@ -35,7 +37,13 @@ class MapDataModel {
             PlaceData.mapData.mapUrl = sp.getString("map_url" , "")
             PlaceData.mapData.mapWidth = sp.getFloat("map_width" , 0F)
             PlaceData.mapData.mapHeight = sp.getFloat("map_height" , 0F)
-            PlaceData.mapData.mapBackgroundColor = sp.getString("map_background_color" , null)
+            try {
+                PlaceData.mapData.mapBackgroundColor = sp.getString("map_background_color" , null )
+            } catch (e : Exception){
+                PlaceData.mapData.mapBackgroundColor = BaseApp.context.getString(R.string.map_activity_white_color)
+                e.printStackTrace()
+            }
+
             PlaceData.mapData.zoomInId = sp.getInt("open_site" , 1)
             PlaceData.mapData.mapTimeStamp = sp.getLong("picture_version" , 0)
         }

@@ -21,16 +21,37 @@ abstract class FavoriteDataBase : RoomDatabase(){
         private var instance: FavoriteDataBase? = null
 
         @Synchronized
-        fun getDataBase(): FavoriteDataBase {
-            instance?.let {
-                return it
+        fun getDataBase(needToJoinIn : Boolean , whenGot : (FavoriteDataBase) -> Unit ){
+
+            if (!needToJoinIn){
+                instance?.let {
+                    Thread{
+                        whenGot(it)
+                    }.start()
+                    return
+                }
+
+
+                Thread{
+                    Room.databaseBuilder(BaseApp.context.applicationContext,
+                            FavoriteDataBase :: class.java ,"app_favorite_database"
+                    ).build().apply {
+                        instance = this
+                        whenGot(this)
+                    }
+                }.start()
+
+                return
             }
 
-            return Room.databaseBuilder(BaseApp.context.applicationContext,
-                    FavoriteDataBase :: class.java ,"app_favorite_database"
-            ).build().apply {
-                instance = this
-            }
+            Thread{
+                Room.databaseBuilder(BaseApp.context.applicationContext,
+                        FavoriteDataBase :: class.java ,"app_favorite_database"
+                ).build().apply {
+                    instance = this
+                    whenGot(this)
+                }
+            }.start()
         }
     }
 }

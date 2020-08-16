@@ -1,9 +1,6 @@
 package com.mredrock.cyxbs.discover.map.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.mredrock.cyxbs.discover.map.bean.Place
 import io.reactivex.Flowable
 
@@ -18,10 +15,10 @@ interface PlaceDao {
     @Insert
     fun insertAllPlaces(places : MutableList<Place>)//一次性添加所有的地址
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPlace(place : Place)//添加单个地址
 
-    @Query("SELECT * FROM places")
+    @Query( "SELECT * FROM places")
     fun queryAllPlaces(): List<Place>//获取全部地址
 
     @Query("DELETE FROM places")

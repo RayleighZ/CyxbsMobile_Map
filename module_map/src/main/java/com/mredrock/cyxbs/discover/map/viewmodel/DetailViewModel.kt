@@ -102,7 +102,8 @@ class DetailViewModel : BaseViewModel() {
     }
 
     fun setDetailPic(vpAdapter: DetailViewPageAdapter, listOfPicUrls: List<String>) {
-        vpAdapter.listOfImageUrls = listOfPicUrls
+        vpAdapter.listOfImageUrls.clear()
+        vpAdapter.listOfImageUrls.addAll(listOfPicUrls)
         vpAdapter.notifyDataSetChanged()
     }
 
@@ -118,6 +119,10 @@ class DetailViewModel : BaseViewModel() {
                 .safeSubscribeBy {
                     if (it == null)
                         return@safeSubscribeBy
+                    if (it.images == null){
+                        setDetailPic(vpAdapter , listOf())
+                        listOfPicUrls = listOf()
+                    }
                     listOfPicUrls = it.images!!
                     it.images?.let { it1 -> setDetailPic(vpAdapter, it1) }
                     it.tags?.let { it1 -> setDetails(chipGroupWR, it1) }
@@ -138,7 +143,7 @@ class DetailViewModel : BaseViewModel() {
                         ivWR.get()?.setImageResource(R.mipmap.map_ic_keeped)
                         curPlace.isCollected = true
 
-                        PlaceModel.insertCollectPlace(curPlace)
+                        PlaceModel.insertCollectPlace(false , curPlace)
 
                         for (i: Int in PlaceData.placeList.indices) {
                             if (PlaceData.placeList[i].placeId == curPlace.placeId) {
@@ -165,7 +170,7 @@ class DetailViewModel : BaseViewModel() {
                         ivWR.get()?.setImageResource(R.drawable.map_ic_stared)
                         curPlace.isCollected = false
 
-                        PlaceModel.delCollectPlace(DetailFragment.placeId)
+                        PlaceModel.delCollectPlace(false , DetailFragment.placeId)
 
                         for (i: Int in PlaceData.placeList.indices) {
                             if (PlaceData.placeList[i].placeId == curPlace.placeId) {

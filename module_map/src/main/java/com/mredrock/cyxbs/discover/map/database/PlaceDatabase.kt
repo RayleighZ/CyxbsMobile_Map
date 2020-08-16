@@ -18,16 +18,40 @@ abstract class PlaceDatabase : RoomDatabase(){
     companion object{
         private var instance : PlaceDatabase ?= null
         @Synchronized
-        fun getDataBase() : PlaceDatabase{
-            instance?.let {
-                return it
+        fun getDataBase(needToJoinIn : Boolean , whenGot : (PlaceDatabase) -> Unit){
+
+            if (!needToJoinIn){
+                instance?.let {
+                    Thread{
+                        whenGot(it)
+                    }.start()
+                    return
+                }
+
+                Thread{
+                    Room.databaseBuilder(BaseApp.context.applicationContext,
+                            PlaceDatabase :: class.java ,"app_placedata_database"
+                    ).build().apply {
+                        instance = this
+                        whenGot(this)
+                    }
+                }.start()
+                return
             }
 
-            return Room.databaseBuilder(BaseApp.context.applicationContext,
+            Thread{
+                Room.databaseBuilder(BaseApp.context.applicationContext,
+                        PlaceDatabase :: class.java ,"app_placedata_database"
+                ).build().apply {
+                    instance = this
+                    whenGot(this)
+                }
+            }.start()
+            /*return Room.databaseBuilder(BaseApp.context.applicationContext,
                     PlaceDatabase :: class.java ,"app_placedata_database"
             ).build().apply {
                 instance = this
-            }
+            }*/
         }
     }
 }

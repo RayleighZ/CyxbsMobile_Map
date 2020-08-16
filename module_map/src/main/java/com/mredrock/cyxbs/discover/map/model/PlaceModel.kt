@@ -1,7 +1,5 @@
 package com.mredrock.cyxbs.discover.map.model
 
-import android.database.sqlite.SQLiteConstraintException
-import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.database.FavoriteDataBase
@@ -11,92 +9,90 @@ import com.mredrock.cyxbs.discover.map.database.PlaceDatabase
 class PlaceModel {
     companion object {
 
-       /* val databaseThread: Thread by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-            Thread()
-        }*/
+        /* val databaseThread: Thread by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
+             Thread()
+         }*/
 
         //全部加载
-        fun loadPlace(onLoaded : () ->Unit) {
-            Thread {
-                PlaceData.placeList.addAll(PlaceDatabase.getDataBase().getPlaceDao().queryAllPlaces())
-                onLoaded()
-            }.start()
+
+        fun loadAllData( needToJoinIn: Boolean,onLoaded: () -> Unit) {
+            loadPlace(needToJoinIn) { }
+            loadCollect(needToJoinIn) { }
+            loadHistory(needToJoinIn) { }
+            onLoaded()
+        }
+
+        fun loadPlace(needToJoinIn : Boolean,onLoaded: () -> Unit) {
+            PlaceDatabase.getDataBase(needToJoinIn) {
+                PlaceData.placeList.addAll(it.getPlaceDao().queryAllPlaces())
+            }
+            onLoaded()
         }
 
         //全部存储，由于索引为ID，所以如果不清除直接添加会报错
-        fun saveAllPlace(onSaved : ()-> Unit){
-            Thread {
-                PlaceDatabase.getDataBase().getPlaceDao().deleteAllPlaces()
-                PlaceDatabase.getDataBase().getPlaceDao().insertAllPlaces(PlaceData.placeList)
-                onSaved()
-            }.start()
+        fun saveAllPlace(needToJoinIn : Boolean,onSaved: () -> Unit) {
+            PlaceDatabase.getDataBase(needToJoinIn) {
+                it.getPlaceDao().deleteAllPlaces()
+                it.getPlaceDao().insertAllPlaces(PlaceData.placeList)
+            }
+            onSaved()
         }
 
-        fun insertCollectPlace(place : Place){
-            Thread {
-                try {
-                    FavoriteDataBase.getDataBase().getFavoriteDao().insertPlace(place)
-                } catch ( e : SQLiteConstraintException){
-                    e.printStackTrace()
-                }
-            }.start()
+        fun insertCollectPlace(needToJoinIn : Boolean,place: Place) {
+            FavoriteDataBase.getDataBase(needToJoinIn) {
+                it.getFavoriteDao().insertPlace(place)
+            }
         }
 
-        fun delCollectPlace(placeId: Int){
-            Thread{
-                FavoriteDataBase.getDataBase().getFavoriteDao().deletePlacesById(placeId)
-            }.start()
+        fun delCollectPlace(needToJoinIn : Boolean,placeId: Int) {
+            FavoriteDataBase.getDataBase(needToJoinIn) {
+                it.getFavoriteDao().deletePlacesById(placeId)
+            }
         }
 
-        fun loadCollect(onLoaded: () -> Unit){
-            Thread {
-                PlaceData.collectPlaceList.addAll(FavoriteDataBase.getDataBase().getFavoriteDao().queryAllPlaces())
+        fun loadCollect(needToJoinIn : Boolean,onLoaded: () -> Unit) {
+            FavoriteDataBase.getDataBase(needToJoinIn) {
+                PlaceData.collectPlaceList.addAll(it.getFavoriteDao().queryAllPlaces())
                 onLoaded()
             }
         }
 
-        fun saveAllCollect(onSaved: () -> Unit){
-            Thread {
-                FavoriteDataBase.getDataBase().getFavoriteDao().deleteAllPlaces()
-                FavoriteDataBase.getDataBase().getFavoriteDao().insertAllPlaces(PlaceData.collectPlaceList)
-                onSaved()
-            }.start()
+
+        fun saveAllCollect(needToJoinIn : Boolean,onSaved: () -> Unit) {
+            FavoriteDataBase.getDataBase(needToJoinIn){
+                it.getFavoriteDao()
+                        .deleteAllPlaces()
+                it.getFavoriteDao().insertAllPlaces(PlaceData.collectPlaceList)
+            }
+            onSaved()
         }
 
-        fun loadHistory(onLoaded: () -> Unit){
-            Thread {
-                PlaceData.searchHistoryList.addAll(HistoryDatabase.getDataBase().getPlaceDao().queryAllPlaces())
-                onLoaded()
-            }.start()
+        fun loadHistory(needToJoinIn : Boolean,onLoaded: () -> Unit) {
+            HistoryDatabase.getDataBase(needToJoinIn) {
+                PlaceData.searchHistoryList.addAll(it.getPlaceDao().queryAllPlaces())
+            }
+            onLoaded()
         }
 
-        fun saveAllHistory(onSaved: () -> Unit){
-            Thread {
-                HistoryDatabase.getDataBase().getPlaceDao().deleteAllPlaces()
-                HistoryDatabase.getDataBase().getPlaceDao().insertAllPlaces(PlaceData.collectPlaceList)
-                onSaved()
-            }.start()
+        fun saveAllHistory(needToJoinIn : Boolean,onSaved: () -> Unit) {
+            HistoryDatabase.getDataBase(needToJoinIn) {
+                it.getPlaceDao().deleteAllPlaces()
+                it.getPlaceDao().insertAllPlaces(PlaceData.collectPlaceList)
+            }
+            onSaved()
         }
 
-        fun insertHistory(place : Place){
-            Thread{
-                try {
-                    HistoryDatabase.getDataBase().getPlaceDao().insertPlace(place)
-                } catch ( e : SQLiteConstraintException){
-                    e.printStackTrace()
-                }
-            }.start()
+        fun insertHistory(needToJoin : Boolean,place: Place) {
+            HistoryDatabase.getDataBase(needToJoin) {
+                it.getPlaceDao().insertPlace(place)
+            }
         }
 
-        fun delHistory(placeId : Int){
-            Thread {
-                HistoryDatabase.getDataBase().getPlaceDao().deletePlacesById(placeId)
-            }.start()
+        fun delHistory(needToJoinIn : Boolean,placeId: Int) {
+            HistoryDatabase.getDataBase(needToJoinIn) {
+                it.getPlaceDao().deletePlacesById(placeId)
+            }
         }
-    }
-
-    private fun runThread(runnable: Runnable){
     }
 }
-
 

@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.mredrock.cyxbs.common.BaseApp.Companion.context
+import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.discover.map.R
 
 /**
@@ -16,7 +17,13 @@ import com.mredrock.cyxbs.discover.map.R
  */
 class DetailViewPageAdapter : PagerAdapter(){
 
-    public lateinit var listOfImageUrls : List<String>
+    var listOfImageUrls = ArrayList<String>()
+
+
+    //强行刷新界面
+    override fun getItemPosition(`object`: Any): Int {
+        return POSITION_NONE
+    }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`
@@ -26,15 +33,15 @@ class DetailViewPageAdapter : PagerAdapter(){
         return 0.8F
     }
 
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        container.removeView(`object` as View)
+    }
+
     override fun getCount(): Int {
-        return try {
-            if (listOfImageUrls.isEmpty()){
-                2
-            } else {
-                listOfImageUrls.size
-            }
-        } catch (e : Exception){
+        return  if (listOfImageUrls.isEmpty()){
             2
+        } else {
+            listOfImageUrls.size
         }
     }
 
@@ -42,6 +49,7 @@ class DetailViewPageAdapter : PagerAdapter(){
         val iv = ImageView(context)
         iv.scaleType = ImageView.ScaleType.FIT_CENTER
         if (listOfImageUrls.isNotEmpty()){
+            LogUtils.d("DetailVPAdapter" , listOfImageUrls[position])
             Glide.with(context).load(listOfImageUrls[position])
                     .apply(RequestOptions.bitmapTransform(RoundedCorners(9)))
                     .placeholder(R.drawable.map_shape_placeholder_detail_pic)
