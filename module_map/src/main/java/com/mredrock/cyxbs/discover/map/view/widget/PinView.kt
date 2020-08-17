@@ -30,7 +30,7 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
     private var sPinList: MutableList<PointF> = ArrayList()
     private var sPinSize = PointF()
 
-    private var lastPlace: Place? = null
+    var lastPlace: Place? = null
 
     //    private var pinList: MutableList<ImageView> = ArrayList()
     private var pinBitmapList: MutableList<Bitmap> = ArrayList()

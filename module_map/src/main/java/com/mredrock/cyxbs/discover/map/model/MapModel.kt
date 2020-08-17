@@ -31,6 +31,9 @@ class MapModel {
         }
         var downloadByte: Long = 0
         val file = File(filePath)
+        if (file.exists() && file.isFile) {
+            file.delete()
+        }
         if (!file.exists()) {
             file.parentFile.mkdirs()
             file.createNewFile()

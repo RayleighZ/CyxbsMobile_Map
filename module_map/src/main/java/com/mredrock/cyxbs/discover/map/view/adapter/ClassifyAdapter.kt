@@ -71,7 +71,7 @@ class ClassifyAdapter(
 
                 //在下面做点击逻辑
                 //CyxbsToast.makeText(BaseApp.context, "点击了：${holder.tvName.text}", Toast.LENGTH_SHORT).show()
-                activity.pinByClassify(holder.tvName.text.toString())
+                activity.pinByClassify(item.code ?: "")
             }
         }
     }

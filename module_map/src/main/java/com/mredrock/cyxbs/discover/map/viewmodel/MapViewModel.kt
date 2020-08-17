@@ -49,7 +49,7 @@ class MapViewModel : BaseViewModel() {
     var mBasicMapData = MutableLiveData<BasicMapData>()
     var mDownloadProgress: MutableLiveData<Float> = MutableLiveData()
     var mMapPath: MutableLiveData<String> = MutableLiveData()
-    var mCollect = MutableLiveData<List<FavoritePlace>>()
+    var mCollect = MutableLiveData<FavoritePlace>()
 
     fun getRetrofitConfig(builder: Retrofit.Builder): Retrofit.Builder {
         builder.baseUrl(END_POINT_REDROCK)
@@ -79,9 +79,6 @@ class MapViewModel : BaseViewModel() {
             addInterceptor(ProgressInterceptor(object : DownloadListener {
                 override fun progress(url: String, bytesRead: Long, contentLength: Long, done: Boolean) {
                     this@MapViewModel.mDownloadProgress.postValue((bytesRead.toDouble() / contentLength).toFloat())
-                    if (done) {
-                        this@MapViewModel.mMapPath.postValue(Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg")
-                    }
                 }
             }))
         }
@@ -146,6 +143,7 @@ class MapViewModel : BaseViewModel() {
                 .doOnNext {
                     val path = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
                     model.saveFile(it, path)
+                    this@MapViewModel.mMapPath.postValue(Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg")
                 }
                 .doOnError { throwable ->
                     LogUtils.e(TAG, "accept on error: ${PlaceData.mapData.mapUrl}", throwable)
@@ -185,7 +183,7 @@ class MapViewModel : BaseViewModel() {
                 }.lifeCycle()
     }
 
-    fun pinByType(type : String , pinFun : (placeId : List<Int>) -> Unit){
+    fun pinByType(type: String, pinFun: (placeId: List<Int>) -> Unit) {
         ApiGenerator.getApiService(ApiService::class.java)
                 .getClassifyInfoList(type)
                 .mapOrThrowApiException()

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
 
-    <solid
-        android:color="#E1EDFB"/>
+    <solid android:color="@color/map_fragment_detail_top_line_color" />
 
     <size
         android:width="28dp"
-        android:height="7dp"/>
+        android:height="7dp" />
 
     <corners android:radius="3.5dp" />
 </shape>

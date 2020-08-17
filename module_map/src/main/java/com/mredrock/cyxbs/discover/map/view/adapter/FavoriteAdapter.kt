@@ -32,7 +32,7 @@ class FavoriteAdapter(
         val item = dataList[position]
 
         if (holder is FavoriteViewHolder) {
-            holder.tvName.text = item.placeNickname
+//            holder.tvName.text = item.placeNickname
 
             if (position == 0) {
                 holder.tvName.setPadding(holder.tvName.paddingStart, 0,
@@ -46,7 +46,7 @@ class FavoriteAdapter(
             }
 
             holder.itemView.setOnClickListener {
-                CyxbsToast.makeText(BaseApp.context, "点击：${item.placeNickname}", Toast.LENGTH_SHORT).show()
+//                CyxbsToast.makeText(BaseApp.context, "点击：${item.placeNickname}", Toast.LENGTH_SHORT).show()
             }
         }
     }

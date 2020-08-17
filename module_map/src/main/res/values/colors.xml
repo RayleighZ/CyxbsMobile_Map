@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    //测试数据
-    <color name="map_activity_background_color">#96ecbb</color>
-
     <color name="map_activity_search_history_text_color">#778AA9</color>
     <color name="map_activity_search_history_item_text_color">#234780</color>
     <color name="map_activity_search_history_clear_all_color">#ABBCD8</color>
+
+    <color name="map_alert_dialog_background_color">#FFFFFF</color>
 
     <color name="map_activity_white_color">#FFFFFF</color>
     <color name="map_activity_line_color">#F0F4FD</color>
@@ -17,6 +16,12 @@
     <color name="map_activity_favorite_item_name_color">#253E65</color>
     <color name="map_activity_favorite_item_horizontal_line_color">#E2E6EF</color>
     <color name="map_activity_favorite_item_scroll_bar_color">#47DAFA</color>
+
+    <color name="map_fragment_detail_background_color">#FFFFFF</color>
+    <color name="map_fragment_detail_top_line_color">#E1EDFB</color>
+    <color name="map_fragment_detail_detail_label_color">#778AA9</color>
+    <color name="map_fragment_detail_share_photo_color">#234780</color>
+    <color name="map_fragment_detail_about_place_color">#778AA9</color>
 
     <color name="map_alert_dialog_title_color">#15305C</color>
     <color name="map_alert_dialog_content_color">#132F5B</color>

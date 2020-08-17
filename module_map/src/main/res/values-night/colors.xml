@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <color name="map_activity_search_history_text_color">#A1A1A2</color>
+    <color name="map_activity_search_history_item_text_color">#F0F0F2</color>
+    <color name="map_activity_search_history_clear_all_color">#5A5A5A</color>
+
+    <color name="map_alert_dialog_background_color">#2D2D2D</color>
+
+    <color name="map_activity_white_color">#000101</color>
+    <color name="map_activity_line_color">#000101</color>
+    <color name="map_activity_classify_name_color">#F0F0F2</color>
+    <color name="map_activity_classify_background_color">#3F3F3F</color>
+    <color name="map_activity_detail_about_place_color">#979798</color>
+    <color name="map_activity_favorite_name_color">#F0F0F2</color>
+
+    <color name="map_fragment_detail_background_color">#2D2D2D</color>
+    <color name="map_fragment_detail_top_line_color">#000101</color>
+    <color name="map_fragment_detail_detail_label_color">#F0F0F2</color>
+    <color name="map_fragment_detail_share_photo_color">#A1A1A2</color>
+    <color name="map_fragment_detail_about_place_color">#F0F0F2</color>
+
+    <color name="map_alert_dialog_title_color">#F0F0F2</color>
+    <color name="map_alert_dialog_content_color">#F0F0F2</color>
+    <color name="map_alert_dialog_positive_button_color">#4B44E5</color>
+    <color name="map_alert_dialog_positive_button_text_color">#FFFFFF</color>
+    <color name="map_alert_dialog_negative_button_color">#E7EFFD</color>
+    <color name="map_alert_dialog_negative_button_text_color">#86AAE3</color>
+
+    <color name="map_activity_collect_charnum_color">#7E90A8</color>
+    <color name="map_activity_collect_uncollect_color">#01CAF0</color>
+    <color name="map_activity_collect_edit_back_color">#F1F6FD</color>
+    <color name="map_activity_showpic_share_words_hight_blue">#01CAF0</color>
+    <!--详细信息  地点名称颜色-->
+    <color name="map_fragment_detail_name_color">#F0F0F2</color>
+    <color name="map_fragment_detail_below_title_color">#A1A1A2</color>
+    <!--    打字框背景颜色-->
+    <color name="map_activity_search_background_shallow_color">#1F1F1F</color>
+</resources>
+

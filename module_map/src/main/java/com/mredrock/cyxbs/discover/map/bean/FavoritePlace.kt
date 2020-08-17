@@ -9,9 +9,6 @@ import java.io.Serializable
  */
 @Entity(primaryKeys = ["placeId"], tableName = "favorites")
 class FavoritePlace : Serializable {
-    @SerializedName("place_nickname")
-    var placeNickname: String? = null            //用户起的名字
-
     @SerializedName("place_id")
-    var placeId: Int = 0
+    var placeId: List<Int>? = null
 }

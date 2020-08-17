@@ -1,5 +1,6 @@
 package com.mredrock.cyxbs.discover.map.model
 
+import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.database.FavoriteDataBase
@@ -24,6 +25,7 @@ class PlaceModel {
 
         fun loadPlace(needToJoinIn : Boolean,onLoaded: () -> Unit) {
             PlaceDatabase.getDataBase(needToJoinIn) {
+                PlaceData.placeList.clear()
                 PlaceData.placeList.addAll(it.getPlaceDao().queryAllPlaces())
             }
             onLoaded()
@@ -52,6 +54,7 @@ class PlaceModel {
 
         fun loadCollect(needToJoinIn : Boolean,onLoaded: () -> Unit) {
             FavoriteDataBase.getDataBase(needToJoinIn) {
+                PlaceData.collectPlaceList.clear()
                 PlaceData.collectPlaceList.addAll(it.getFavoriteDao().queryAllPlaces())
                 onLoaded()
             }
@@ -60,6 +63,7 @@ class PlaceModel {
 
         fun saveAllCollect(needToJoinIn : Boolean,onSaved: () -> Unit) {
             FavoriteDataBase.getDataBase(needToJoinIn){
+                LogUtils.e("---","${PlaceData.collectPlaceList.size}")
                 it.getFavoriteDao()
                         .deleteAllPlaces()
                 it.getFavoriteDao().insertAllPlaces(PlaceData.collectPlaceList)
@@ -69,6 +73,7 @@ class PlaceModel {
 
         fun loadHistory(needToJoinIn : Boolean,onLoaded: () -> Unit) {
             HistoryDatabase.getDataBase(needToJoinIn) {
+                PlaceData.searchHistoryList.clear()
                 PlaceData.searchHistoryList.addAll(it.getPlaceDao().queryAllPlaces())
             }
             onLoaded()
@@ -77,7 +82,7 @@ class PlaceModel {
         fun saveAllHistory(needToJoinIn : Boolean,onSaved: () -> Unit) {
             HistoryDatabase.getDataBase(needToJoinIn) {
                 it.getPlaceDao().deleteAllPlaces()
-                it.getPlaceDao().insertAllPlaces(PlaceData.collectPlaceList)
+                it.getPlaceDao().insertAllPlaces(PlaceData.searchHistoryList)
             }
             onSaved()
         }

@@ -18,7 +18,7 @@ interface ApiService {
 
     //获得收藏
     @GET("wxapi/magipoke-stumap/rockmap/collect")
-    fun getCollect() : Observable<RedrockApiWrapper<List<FavoritePlace>>>
+    fun getCollect() : Observable<RedrockApiWrapper<FavoritePlace>>
 
     //搜索下方按钮
     @GET("wxapi/magipoke-stumap/button")

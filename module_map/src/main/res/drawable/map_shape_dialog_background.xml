@@ -3,5 +3,5 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="ResourceName">
     <corners android:radius="8dp" />
-    <solid android:color="@android:color/white" />
+    <solid android:color="@color/map_alert_dialog_background_color" />
 </shape>

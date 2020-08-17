@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteConstraintException
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
@@ -11,19 +12,16 @@ import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.*
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -48,25 +46,22 @@ import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.bean.*
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
 import com.mredrock.cyxbs.discover.map.config.PlaceData
-import com.mredrock.cyxbs.discover.map.database.PlaceDatabase
+import com.mredrock.cyxbs.discover.map.database.HistoryDatabase
 import com.mredrock.cyxbs.discover.map.model.MapDataModel
 import com.mredrock.cyxbs.discover.map.model.PlaceModel
 import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil
 import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil.getProgressBar
-import com.mredrock.cyxbs.discover.map.util.isOnlineByPing
+import com.mredrock.cyxbs.discover.map.util.isNetworkConnected
 import com.mredrock.cyxbs.discover.map.view.adapter.ClassifyAdapter
-import com.mredrock.cyxbs.discover.map.view.adapter.FavoriteAdapter
 import com.mredrock.cyxbs.discover.map.view.fragment.DetailFragment
 import com.mredrock.cyxbs.discover.map.view.fragment.SearchFragment
 import com.mredrock.cyxbs.discover.map.viewmodel.MapViewModel
 import kotlinx.android.synthetic.main.map_activity_map.*
 import kotlinx.android.synthetic.main.map_fragment_search.*
-import kotlinx.android.synthetic.main.map_pop_window_no_favorite.view.*
+import okhttp3.internal.toHexString
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.abs
-
 
 class MapActivity : BaseActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(MapViewModel::class.java) }
@@ -101,16 +96,18 @@ class MapActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
         getPermissions()
         setContentView(R.layout.map_activity_map)
 
-        PlaceModel.loadAllData(false){
-            for (place in PlaceData.placeList){
-                place.placeName?.let { LogUtils.d("MainActivity" , it) }
+        PlaceModel.loadAllData(false) {
+            for (place in PlaceData.placeList) {
+                place.placeName?.let { LogUtils.d("MainActivity", it) }
             }
         }
         val userState = ServiceManager.getService(IAccountService::class.java).getVerifyService()
-        if (!userState.isLogin()) {
+        if (!userState.isLogin() && isNetworkConnected()) {
             //这里只是模拟一下登录，如果有并发需求，自己设计
             Thread {
                 userState.login(this, "2019213962", "062115")
@@ -121,21 +118,6 @@ class MapActivity : BaseActivity() {
         val statusBarLinearParams = view_status_bar.layoutParams //取控件当前的布局参数
         statusBarLinearParams.height = getStatusBarHeight() //状态栏高度
         view_status_bar.layoutParams = statusBarLinearParams
-
-//        iv_map.setMaximumDpi(10)
-
-        //初始化我的收藏弹出菜单
-//        val popWindowView: View = LayoutInflater.from(this).inflate(R.layout.map_pop_window_no_favorite, null)
-//        val linearLayoutManager = LinearLayoutManager(this)
-//        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-//        popWindowView.rv_map_pop_window.layoutManager = linearLayoutManager
-//        popWindowView.rv_map_pop_window.adapter = favoriteAdapter
-//        popWindowView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-//        popWindow = PopupWindow(popWindowView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true) //-2 是包裹内容，-1 是填充父窗体
-//        popWindow.setBackgroundDrawable(getDrawable(android.R.color.transparent))//透明背景
-//        popWindow.isOutsideTouchable = true
-//        popWindow.isFocusable = true
-//        popWindow.animationStyle = R.style.PopWindow_Anim_Style
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
@@ -185,18 +167,8 @@ class MapActivity : BaseActivity() {
         }
 
         cl_map_favorite.setOnClickListener {
-            //test data
-//            PlaceData.collectPlaceList.add(PlaceData.placeList[0])
-//            PlaceData.collectPlaceList.add(PlaceData.placeList[5])
-//            PlaceData.collectPlaceList.add(PlaceData.placeList[30])
-//            PlaceData.collectPlaceList.add(PlaceData.placeList[20])
-//            PlaceData.collectPlaceList.add(PlaceData.placeList[13])
-//            PlaceData.collectPlaceList.add(PlaceData.placeList[27])
-//            PlaceData.collectPlaceList.add(PlaceData.placeList[10])
 
             if (PlaceData.collectPlaceList.size == 0) {
-//                popWindowView.rv_map_pop_window.gone()
-//                popWindowView.tv_map_no_favorite.visible()
 
                 val toast: Toast = CyxbsToast.makeText(BaseApp.context, R.string.map_my_favorite_no_favorite_toast, Toast.LENGTH_SHORT)
                 toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, toast.xOffset, toast.yOffset)
@@ -210,17 +182,7 @@ class MapActivity : BaseActivity() {
                     pin(PlaceData.collectPlaceList[i].placeCenterX, PlaceData.collectPlaceList[i].placeCenterY)
                 }
                 ZoomInMin(PlaceData.mapData.mapWidth / 2f, PlaceData.mapData.mapHeight / 2f)
-//                favoriteAdapter.notifyDataSetChanged()
             }
-
-//            cl_map_favorite.measure(0, 0)
-//            val location = IntArray(2)
-//            cl_map_favorite.getLocationOnScreen(location)
-//            cl_map_favorite.measure(0, 0)
-//            val windowPos: IntArray? = calculatePopWindowPos(cl_map_favorite, popWindowView)
-//            popWindow.showAtLocation(cl_map_favorite, Gravity.TOP or Gravity.START, (windowPos?.get(0)
-//                    ?: 0) - dp2px(15f), (windowPos?.get(1) ?: 0))
-//            popWindow.update()
         }
 
         window.decorView.findViewById<View>(android.R.id.content).setOnTouchListener { _, _ -> // rel.setFocusable(true);
@@ -312,31 +274,35 @@ class MapActivity : BaseActivity() {
         initObserver()
 
         //判断有无网络
-        if (true) {
+        if (isNetworkConnected()) {
             viewModel.getBasicMapData()
             viewModel.getClassify()
         } else {
             CyxbsToast.makeText(BaseApp.context, "无网络，加载本地数据", Toast.LENGTH_SHORT).show()
             MapDataModel.loadMapData()
             PlaceModel.loadCollect(false) {
-                LogUtils.d("MapActivity" , PlaceData.collectPlaceList.size.toString())
+                LogUtils.d("MapActivity", PlaceData.collectPlaceList.size.toString())
             }
             PlaceModel.loadHistory(false) {
-                LogUtils.d("MapActivity" , PlaceData.searchHistoryList.size.toString())
+                LogUtils.d("MapActivity", PlaceData.searchHistoryList.size.toString())
             }
             PlaceModel.loadPlace(false) {
-                LogUtils.d("MapActivity" , PlaceData.placeList.size.toString())
+                LogUtils.d("MapActivity", PlaceData.placeList.size.toString())
             }
             this.mapTimeStamp = PlaceData.mapData.mapTimeStamp
 
             iv_map.setBackgroundColor(Color.parseColor(PlaceData.mapData.mapBackgroundColor))
 
             val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
+
             if (File(mapPath).exists()) {
                 this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
             } else {
                 CyxbsToast.makeText(BaseApp.context, "本地无地图数据", Toast.LENGTH_LONG).show()
             }
+
+            val text = getString(R.string.map_search_hot) + "风雨操场"
+            et_map_search.hint = text
         }
     }
 
@@ -393,20 +359,18 @@ class MapActivity : BaseActivity() {
             this@MapActivity.iv_map.setImage(ImageSource.uri(it))
         })
 
-        viewModel.mCollect.observe(this, Observer<List<FavoritePlace>> {
-            val placeIdList: MutableList<Int> = ArrayList()
-            for (i: Int in it.indices) {
-                placeIdList.add(it[i].placeId)
-            }
-            PlaceData.collectPlaceList.clear()
-            for (i: Int in PlaceData.placeList.indices) {
-                if (placeIdList.contains(PlaceData.placeList[i].placeId)) {
-                    PlaceData.placeList[i].isCollected = true
-                    PlaceData.collectPlaceList.add(PlaceData.placeList[i])
+        viewModel.mCollect.observe(this, Observer<FavoritePlace> {
+            it.placeId?.let { it1 ->
+                PlaceData.collectPlaceList.clear()
+                for (i: Int in PlaceData.placeList.indices) {
+                    if (it1.contains(PlaceData.placeList[i].placeId)) {
+                        PlaceData.placeList[i].isCollected = true
+                        PlaceData.collectPlaceList.add(PlaceData.placeList[i])
+                    }
                 }
             }
             //存储所有的收藏地点
-            PlaceModel.saveAllCollect(false) {  }
+            PlaceModel.saveAllCollect(false) { }
         })
 
         viewModel.mBasicMapData.observe(this, Observer<BasicMapData> {
@@ -427,26 +391,29 @@ class MapActivity : BaseActivity() {
                 PlaceData.mapData.mapUrl = mapUrl
                 PlaceData.mapData.zoomInId = zoomInId
 
-                PlaceModel.saveAllCollect(false) {
-                    LogUtils.d("MapActivity" , "存储时内存中 collect"+PlaceData.collectPlaceList.size.toString())
-                }
-                PlaceModel.saveAllPlace(false) {
-                    LogUtils.d("MapActivity" , "存储时内存中 place"+PlaceData.placeList.size.toString())
-                }
-                PlaceModel.saveAllHistory(false) {
-                    LogUtils.d("MapActivity" , " 存储时内存中 history"+PlaceData.placeList.size.toString())
-                }
+                PlaceData.mapData.mapTimeStamp = mapTimeStamp
                 this@MapActivity.mapTimeStamp = mapTimeStamp
 
                 this@MapActivity.iv_map.setBackgroundColor(Color.parseColor(mapBackgroundColor))
 
-                val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
-                MapDataModel.saveMapData()
-
                 viewModel.getCollect()
 
-//                if (File(mapPath).exists() && PlaceData.mapData.mapTimeStamp >= mapTimeStamp) {
-                if (File(mapPath).exists()) {
+                PlaceModel.saveAllPlace(false) {
+                    LogUtils.d("MapActivity", "存储时内存中 place" + PlaceData.placeList.size.toString())
+                }
+
+                PlaceModel.saveAllCollect(false) {
+                    LogUtils.d("MapActivity", "存储时内存中 collect" + PlaceData.collectPlaceList.size.toString())
+                }
+
+                PlaceModel.saveAllHistory(false) {
+                    LogUtils.d("MapActivity", " 存储时内存中 history" + PlaceData.placeList.size.toString())
+                }
+
+                val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
+
+                if (File(mapPath).exists() && MapDataModel.getMapTimeStamp() >= mapTimeStamp) {
+//                if (File(mapPath).exists()) {
                     this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
                 } else {
                     if (ContextCompat.checkSelfPermission(
@@ -458,12 +425,14 @@ class MapActivity : BaseActivity() {
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                             ) != PackageManager.PERMISSION_GRANTED
                     ) {
-                        CyxbsToast.makeText(BaseApp.context, "无存储权限，操作失败", Toast.LENGTH_LONG).show()
+                        CyxbsToast.makeText(BaseApp.context, "无存储权限，第一次操作失败", Toast.LENGTH_LONG).show()
                     } else {
                         needGetMap = 1
                         viewModel.getMap()
                     }
                 }
+
+                MapDataModel.saveMapData()
 
                 for (i: Int in PlaceData.placeList.indices) {
                     if (PlaceData.placeList[i].placeId == zoomInId) {
@@ -472,7 +441,6 @@ class MapActivity : BaseActivity() {
                             }
 
                             override fun onReady() {
-//                                pinAndZoomIn(1558f, 8714f, 1)    //大门测试数据
                                 pinAndZoomIn(PlaceData.placeList[i].placeCenterX,
                                         PlaceData.placeList[i].placeCenterY,
                                         PlaceData.placeList[i].placeId)
@@ -559,6 +527,7 @@ class MapActivity : BaseActivity() {
     }
 
     fun removeAllPin() {
+        iv_map.lastPlace = null
         iv_map.removeAllPin()
     }
 
@@ -717,6 +686,9 @@ class MapActivity : BaseActivity() {
             1 -> if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 CyxbsToast.makeText(BaseApp.context, "无法获取存储权限，程序可能异常", Toast.LENGTH_LONG).show()
             } else {
+                if (needGetMap == 1) {
+                    CyxbsToast.makeText(BaseApp.context, "成功获取权限，第二次操作成功！", Toast.LENGTH_SHORT).show()
+                }
                 if (File(mapPath).exists()) {
                     this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
                 } else {
@@ -732,32 +704,37 @@ class MapActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-
-        Thread{
+        Thread {
             PlaceModel.saveAllCollect(true) {
-                LogUtils.d("MapActivity" , "存储时内存中 collect"+PlaceData.collectPlaceList.size.toString())
+                LogUtils.d("MapActivity", "存储时内存中 collect" + PlaceData.collectPlaceList.size.toString())
             }
-
-            PlaceModel.saveAllPlace (true){
-                LogUtils.d("MapActivity" , "存储时内存中 place"+PlaceData.placeList.size.toString())
+            PlaceModel.saveAllPlace(true) {
+                LogUtils.d("MapActivity", "存储时内存中 place" + PlaceData.placeList.size.toString())
             }
-            PlaceModel.saveAllHistory (true){
-                LogUtils.d("MapActivity" , " 存储时内存中 history"+PlaceData.placeList.size.toString())
+            PlaceModel.saveAllHistory(true) {
+                LogUtils.d("MapActivity", " 存储时内存中 history" + PlaceData.placeList.size.toString())
             }
         }.join()
-
         super.onDestroy()
     }
 
-    fun pinByClassify(type : String){
+    fun pinByClassify(type: String) {
+        var times = 0
         viewModel.pinByType(type) {
-            for (place in PlaceData.placeList){
-                for (id in it){
-                    if (place.placeId == id){
-                        pin(place.placeCenterX , place.placeCenterY)
+            for (place in PlaceData.placeList) {
+                for (id in it) {
+                    if (place.placeId == id) {
+                        if (times == 0) {
+                            supportFragmentManager.popBackStack("detailFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                            detailFragment = null
+                            removeAllPin()
+                        }
+                        times++
+                        pin(place.placeCenterX, place.placeCenterY)
                     }
                 }
             }
+            if (times != 0) ZoomInMin(PlaceData.mapData.mapWidth / 2f, PlaceData.mapData.mapHeight / 2f)
         }
     }
 }
