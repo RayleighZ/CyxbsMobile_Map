@@ -287,7 +287,7 @@ class MapActivity : BaseActivity() {
             PlaceModel.loadAllData(false) {
                 LogUtils.d("MapActivity", PlaceData.placeList.size.toString())
             }
-            PlaceModel.loadCollect(false) {
+            /*PlaceModel.loadCollect(false) {
                 LogUtils.d("MapActivity", PlaceData.collectPlaceList.size.toString())
             }
             PlaceModel.loadHistory(false) {
@@ -295,7 +295,7 @@ class MapActivity : BaseActivity() {
             }
             PlaceModel.loadPlace(false) {
                 LogUtils.d("MapActivity", PlaceData.placeList.size.toString())
-            }
+            }*/
             this.mapTimeStamp = PlaceData.mapData.mapTimeStamp
 
             iv_map.setBackgroundColor(Color.parseColor(PlaceData.mapData.mapBackgroundColor))
@@ -375,9 +375,9 @@ class MapActivity : BaseActivity() {
                         PlaceData.collectPlaceList.add(PlaceData.placeList[i])
                     }
                 }
+                //存储所有的收藏地点
+                PlaceModel.saveAllCollect(false) { }
             }
-            //存储所有的收藏地点
-            PlaceModel.saveAllCollect(false) { }
         })
 
         viewModel.mBasicMapData.observe(this, Observer<BasicMapData> {
@@ -715,7 +715,7 @@ class MapActivity : BaseActivity() {
         viewModel.addHot(placeId)
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
         Thread {
             PlaceModel.saveAllCollect(true) {
                 LogUtils.d("MapActivity", "存储时内存中 collect" + PlaceData.collectPlaceList.size.toString())
@@ -727,7 +727,7 @@ class MapActivity : BaseActivity() {
                 LogUtils.d("MapActivity", " 存储时内存中 history" + PlaceData.placeList.size.toString())
             }
         }.join()
-        super.onDestroy()
+        super.onStop()
     }
 
     fun pinByClassify(type: String) {

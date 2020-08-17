@@ -22,7 +22,7 @@ class ShowPicFragment : BaseFragment() {
     companion object{
         var url = ""
     }
-    
+
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return if (enter) {
             AnimationUtils.loadAnimation(activity, R.anim.map_anl_push_top_in)

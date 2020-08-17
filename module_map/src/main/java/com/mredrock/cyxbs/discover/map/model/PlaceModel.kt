@@ -23,7 +23,7 @@ class PlaceModel {
             onLoaded()
         }
 
-        fun loadPlace(needToJoinIn : Boolean,onLoaded: () -> Unit) {
+        private fun loadPlace(needToJoinIn : Boolean, onLoaded: () -> Unit) {
             PlaceDatabase.getDataBase(needToJoinIn) {
                 PlaceData.placeList.clear()
                 PlaceData.placeList.addAll(it.getPlaceDao().queryAllPlaces())
@@ -64,14 +64,16 @@ class PlaceModel {
         fun saveAllCollect(needToJoinIn : Boolean,onSaved: () -> Unit) {
             FavoriteDataBase.getDataBase(needToJoinIn){
                 LogUtils.e("---","${PlaceData.collectPlaceList.size}")
-                it.getFavoriteDao()
-                        .deleteAllPlaces()
+                for (place in PlaceData.collectPlaceList){
+                    LogUtils.d("TTEESSTT" , place.placeName.toString() + " " + place.placeId)
+                }
+                it.getFavoriteDao().deleteAllPlaces()
                 it.getFavoriteDao().insertAllPlaces(PlaceData.collectPlaceList)
             }
             onSaved()
         }
 
-        fun loadHistory(needToJoinIn : Boolean,onLoaded: () -> Unit) {
+        private fun loadHistory(needToJoinIn : Boolean, onLoaded: () -> Unit) {
             HistoryDatabase.getDataBase(needToJoinIn) {
                 PlaceData.searchHistoryList.clear()
                 PlaceData.searchHistoryList.addAll(it.getPlaceDao().queryAllPlaces())

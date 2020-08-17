@@ -31,7 +31,6 @@ abstract class FavoriteDataBase : RoomDatabase(){
                     return
                 }
 
-
                 Thread{
                     Room.databaseBuilder(BaseApp.context.applicationContext,
                             FavoriteDataBase :: class.java ,"app_favorite_database"
