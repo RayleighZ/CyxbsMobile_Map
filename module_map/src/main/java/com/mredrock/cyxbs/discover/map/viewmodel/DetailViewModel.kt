@@ -41,14 +41,17 @@ class DetailViewModel : BaseViewModel() {
 
     var placeName = ObservableField<String>()
     lateinit var curPlace: Place
-    var listOfPicUrls = listOf<String>()
+    var listOfPicUrls = ArrayList<String>()
 
     //动态添加标识
-    fun setIcon(containerWR: WeakReference<LinearLayout>, iconNames: List<String>) {
+    private fun setIcon(containerWR: WeakReference<LinearLayout>, iconNames: List<String>) {
         if (containerWR.get() == null) {
             LogUtils.d("DetailViewModel", "容器空了")
             return
         }
+
+        LogUtils.d("DetailViewModel_asdasdasdasdasdasdasdasd", iconNames[0])
+
 
         val container = containerWR.get()
         container?.removeAllViews()
@@ -79,7 +82,7 @@ class DetailViewModel : BaseViewModel() {
         }
     }
 
-    fun setDetails(chipGroupWR: WeakReference<ChipGroup>, details: List<String>) {
+    private fun setDetails(chipGroupWR: WeakReference<ChipGroup>, details: List<String>) {
         if (chipGroupWR.get() == null){
             LogUtils.d("DetailFragment", "暂无icon数据")
             return
@@ -101,7 +104,7 @@ class DetailViewModel : BaseViewModel() {
         }
     }
 
-    fun setDetailPic(vpAdapter: DetailViewPageAdapter, listOfPicUrls: List<String>) {
+    private fun setDetailPic(vpAdapter: DetailViewPageAdapter, listOfPicUrls: List<String>) {
         vpAdapter.listOfImageUrls.clear()
         vpAdapter.listOfImageUrls.addAll(listOfPicUrls)
         vpAdapter.notifyDataSetChanged()
@@ -121,11 +124,18 @@ class DetailViewModel : BaseViewModel() {
                         return@safeSubscribeBy
                     if (it.images == null){
                         setDetailPic(vpAdapter , listOf())
-                        listOfPicUrls = listOf()
                     }
-                    listOfPicUrls = it.images!!
+                    it.placeAttribute?.get(0)?.let { it1 -> LogUtils.d("detailVM1" , it1) }
+                    if (it.images != null){
+                        listOfPicUrls.addAll(it.images!!)
+                    }
+
+                    if (it.tags == null){
+                        setDetails(chipGroupWR, listOf())
+                    }
                     it.images?.let { it1 -> setDetailPic(vpAdapter, it1) }
                     it.tags?.let { it1 -> setDetails(chipGroupWR, it1) }
+                    it.placeAttribute?.get(0)?.let { it1 -> LogUtils.d("detailVM2" , it1) }
                     it.placeAttribute?.let { it1 -> setIcon(llWR, it1) }
                 }.lifeCycle()
     }

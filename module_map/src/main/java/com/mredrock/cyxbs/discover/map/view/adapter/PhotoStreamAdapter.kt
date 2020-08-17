@@ -16,6 +16,7 @@ import com.github.chrisbanes.photoview.PhotoView
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.utils.extensions.dp2px
 import com.mredrock.cyxbs.discover.map.R
+import com.mredrock.cyxbs.discover.map.view.activity.ShowAllPicActivity
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.sdk27.coroutines.onClick
@@ -26,7 +27,7 @@ import org.jetbrains.anko.wrapContent
  * @date 2020-08-13
  * @author Sca RayleighZ
  */
-class PhotoStreamAdapter(private val arrayOfUrls: Array<String>, private val context: Context) : RecyclerView.Adapter<PhotoStreamAdapter.InnerViewHolder>() {
+class PhotoStreamAdapter(private val arrayOfUrls: Array<String>, private val context: Context  , private val activity : ShowAllPicActivity) : RecyclerView.Adapter<PhotoStreamAdapter.InnerViewHolder>() {
     inner class InnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView : PhotoView = itemView.findViewById<PhotoView>(R.id.iv_map_pic)
     }
@@ -48,8 +49,7 @@ class PhotoStreamAdapter(private val arrayOfUrls: Array<String>, private val con
         val width = wm.defaultDisplay.width
         val widthOfPic = (width - 30) / 2
         holder.imageView.onClick {
-            val dialog = Dialog(BaseApp.context , R.layout.map_dialog_show_pic)
-
+            activity.setImage(arrayOfUrls[position])
         }
         if (position % 2 == 0){
             holder.imageView.setPadding(0 , 0 , BaseApp.context.dp2px(4.5f), BaseApp.context.dp2px(12f) )

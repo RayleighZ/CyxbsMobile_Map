@@ -76,7 +76,7 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //viewModel.setIcon(WeakReference(view.findViewById(R.id.ll_map_icon_container)), listOf("操场", "活动中心"))
-        // viewModel.setDetails(WeakReference(view.findViewById(R.id.chip_group_detail_container)), listOf("热爱跑步的请进", "太强了跑步的涛哥", "张涛男神出没", "卑微张煜在线减肥"))
+        //viewModel.setDetails(WeakReference(view.findViewById(R.id.chip_group_detail_container)), listOf("热爱跑步的请进", "太强了跑步的涛哥", "张涛男神出没", "卑微张煜在线减肥"))
         vpAdapter = DetailViewPageAdapter()
         map_viewpager.adapter = vpAdapter
         map_viewpager.pageMargin = 24

@@ -98,4 +98,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:map_typeface="PFSCHTypeface" />
 
+    <FrameLayout
+        android:id="@+id/fm_map_show_pic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="108dp"
+        tools:layout_editor_absoluteY="10dp">
+
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
