@@ -16,9 +16,9 @@
 
     <color name="map_fragment_detail_background_color">#2D2D2D</color>
     <color name="map_fragment_detail_top_line_color">#000101</color>
-    <color name="map_fragment_detail_detail_label_color">#F0F0F2</color>
+    <color name="map_fragment_detail_detail_label_color">#EFEFF1</color>
     <color name="map_fragment_detail_share_photo_color">#A1A1A2</color>
-    <color name="map_fragment_detail_about_place_color">#F0F0F2</color>
+    <color name="map_fragment_detail_about_place_color">#EFEFF1</color>
 
     <color name="map_alert_dialog_title_color">#F0F0F2</color>
     <color name="map_alert_dialog_content_color">#F0F0F2</color>

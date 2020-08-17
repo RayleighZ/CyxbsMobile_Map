@@ -55,7 +55,7 @@
                 android:layout_height="0dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:src="@drawable/common_back"
+                android:src="@drawable/map_ic_back"
                 app:layout_constraintBottom_toBottomOf="@id/et_map_search"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="@id/et_map_search" />
@@ -181,6 +181,16 @@
                 app:layout_constraintEnd_toEndOf="@id/iv_map_compass_char"
                 app:layout_constraintStart_toStartOf="@id/iv_map_compass_char"
                 app:layout_constraintTop_toTopOf="@id/iv_map_compass_char" />
+
+            <ImageView
+                android:id="@+id/iv_map_lock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/map_ic_unlock"
+                app:layout_constraintEnd_toEndOf="@id/iv_map_compass_picture"
+                app:layout_constraintStart_toStartOf="@id/iv_map_compass_picture"
+                app:layout_constraintTop_toBottomOf="@id/iv_map_compass_char" />
 
             <ImageView
                 android:id="@+id/iv_map_vr"

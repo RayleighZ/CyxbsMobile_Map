@@ -19,7 +19,7 @@
 
         <!--需要设置为可滚动-->
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/tv_map_place_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +35,8 @@
             android:textSize="23sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:map_typeface="PFSCHTypeface" />
 
         <LinearLayout
             android:id="@+id/ll_map_icon_container"
@@ -57,7 +58,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/map_shape_notify_can_pull" />
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_textview2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,9 +66,10 @@
             android:layout_marginTop="24dp"
             android:text="@string/map_detail_detail"
             android:textColor="@color/map_fragment_detail_detail_label_color"
-            android:textSize="14.99sp"
+            android:textSize="17sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_map_icon_container" />
+            app:layout_constraintTop_toBottomOf="@id/ll_map_icon_container"
+            app:map_typeface="PFSCBTypeface" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/map_viewpager"
@@ -86,11 +88,11 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="32dp"
             android:text="@string/map_detail_about_place"
-            android:textColor="@color/map_activity_detail_about_place_color"
-            android:textSize="15sp"
+            android:textColor="@color/map_fragment_detail_about_place_color"
+            android:textSize="17sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/map_tv_share_photo"
-            app:map_typeface="PFSCMTypeface" />
+            app:map_typeface="PFSCBTypeface" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group_detail_container"
@@ -121,17 +123,21 @@
             app:layout_constraintTop_toTopOf="@id/tv_map_place_name"
             app:srcCompat="@drawable/map_ic_stared" />
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_tv_show_maore_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:paddingStart="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:text="查看更多"
             android:textColor="#ABBCD8"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@id/map_textview2"
             app:layout_constraintEnd_toStartOf="@id/map_imageview5"
-            app:layout_constraintTop_toTopOf="@id/map_textview2" />
+            app:layout_constraintTop_toTopOf="@id/map_textview2"
+            app:map_typeface="PFSCMTypeface" />
 
         <ImageView
             android:id="@+id/map_imageview5"
@@ -153,7 +159,7 @@
             app:layout_constraintTop_toBottomOf="@+id/map_viewpager"
             app:srcCompat="@drawable/map_ic_share" />
 
-        <TextView
+        <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
             android:id="@+id/map_tv_share_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -163,7 +169,8 @@
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@+id/map_iv_share_photo"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/map_iv_share_photo" />
+            app:layout_constraintTop_toTopOf="@+id/map_iv_share_photo"
+            app:map_typeface="PFSCBTypeface" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

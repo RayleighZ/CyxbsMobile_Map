@@ -29,6 +29,7 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
     private var pinPositionList: MutableList<PointF> = ArrayList()
     private var sPinList: MutableList<PointF> = ArrayList()
     private var sPinSize = PointF()
+    var isLocked = false
 
     var lastPlace: Place? = null
 
@@ -61,7 +62,8 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
         paint.isAntiAlias = true
         for (i: Int in pinBitmapList.indices) {
             sourceToViewCoord(sPinList[i], vPin)
-            viewToSourceCoord(pinBitmapList[i].width.toFloat(), pinBitmapList[i].height.toFloat(), sPinSize)
+//            viewToSourceCoord(pinBitmapList[i].width.toFloat(), pinBitmapList[i].height.toFloat(), sPinSize)
+            sPinSize.set(pinBitmapList[i].width.toFloat(), pinBitmapList[i].height.toFloat())
             val vX = vPin.x - pinBitmapList[i].width / 2
             val vY = vPin.y - pinBitmapList[i].height
             pinPositionList[i].set(sPinList[i].x - sPinSize.x / 2, sPinList[i].y - sPinSize.y)
@@ -73,7 +75,7 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
     }
 
     init {
-        setOnTouchListener(OnTouchListener { view, motionEvent -> gestureDetector.onTouchEvent(motionEvent) })
+        setOnTouchListener { view, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
     }
 
     fun convertDrawableToBitmap(drawable: Drawable?): Bitmap? {
@@ -97,10 +99,16 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
 
     inner class MySimpleOnGestureListener() : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            if (this@PinView.isReady) {
+            if (isLocked) {
+                CyxbsToast.makeText(BaseApp.context, "请取消锁定后对地图进行操作", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            if (this@PinView.isReady && !isLocked) {
                 val sCoord: PointF? = this@PinView.viewToSourceCoord(e.x, e.y)
+                val x: Float = (sCoord?.x ?: 0f)
+                val y: Float = (sCoord?.y ?: 0f)
                 for (i: Int in pinBitmapList.indices) {
-                    if (sCoord?.x ?: 0f >= pinPositionList[i].x
+                    if (pinVisibilityList[i] && sCoord?.x ?: 0f >= pinPositionList[i].x
                             && sCoord?.x ?: 0f <= pinPositionList[i].x + sPinSize.x
                             && sCoord?.y ?: 0f >= pinPositionList[i].y
                             && sCoord?.y ?: 0f <= pinPositionList[i].y + sPinSize.y) {
@@ -109,24 +117,6 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                         return true
                     }
                 }
-            }
-            return true
-        }
-
-        //        override fun onLongPress(e: MotionEvent) {
-//            if (imageView.isReady()) {
-//                val sCoord: PointF = imageView.viewToSourceCoord(e.x, e.y)
-//                Toast.makeText(getApplicationContext(), "Long press: " + sCoord.x.toInt() + ", " + sCoord.y.toInt(), Toast.LENGTH_SHORT).show()
-//            } else {
-//                Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            if (this@PinView.isReady) {
-                val sCoord: PointF? = this@PinView.viewToSourceCoord(e.x, e.y)
-                val x: Float = (sCoord?.x ?: 0f)
-                val y: Float = (sCoord?.y ?: 0f)
                 var isFind = false
                 lastPlace?.let {
                     if (x >= it.tagLeft && x <= it.tagRight &&
@@ -188,5 +178,18 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
             }
             return true
         }
+
+        //        override fun onLongPress(e: MotionEvent) {
+//            if (imageView.isReady()) {
+//                val sCoord: PointF = imageView.viewToSourceCoord(e.x, e.y)
+//                Toast.makeText(getApplicationContext(), "Long press: " + sCoord.x.toInt() + ", " + sCoord.y.toInt(), Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//
+//        override fun onDoubleTap(e: MotionEvent): Boolean {
+//            return true
+//        }
     }
 }

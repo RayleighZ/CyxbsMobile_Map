@@ -2,22 +2,25 @@ package com.mredrock.cyxbs.discover.map.view.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.sqlite.SQLiteConstraintException
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.util.Log
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
@@ -43,10 +46,12 @@ import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.gone
 import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
-import com.mredrock.cyxbs.discover.map.bean.*
+import com.mredrock.cyxbs.discover.map.bean.BasicMapData
+import com.mredrock.cyxbs.discover.map.bean.ClassifyData
 import com.mredrock.cyxbs.discover.map.bean.ClassifyData.ClassifyPlace
+import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
+import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
-import com.mredrock.cyxbs.discover.map.database.HistoryDatabase
 import com.mredrock.cyxbs.discover.map.model.MapDataModel
 import com.mredrock.cyxbs.discover.map.model.PlaceModel
 import com.mredrock.cyxbs.discover.map.util.DownloadProgressDialogUtil
@@ -56,9 +61,9 @@ import com.mredrock.cyxbs.discover.map.view.adapter.ClassifyAdapter
 import com.mredrock.cyxbs.discover.map.view.fragment.DetailFragment
 import com.mredrock.cyxbs.discover.map.view.fragment.SearchFragment
 import com.mredrock.cyxbs.discover.map.viewmodel.MapViewModel
+import com.zhihu.matisse.Matisse
 import kotlinx.android.synthetic.main.map_activity_map.*
 import kotlinx.android.synthetic.main.map_fragment_search.*
-import okhttp3.internal.toHexString
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -66,14 +71,8 @@ import kotlin.collections.ArrayList
 class MapActivity : BaseActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(MapViewModel::class.java) }
     private val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
-
-    //    private lateinit var popWindow: PopupWindow
     private val classifyItemList: MutableList<ClassifyPlace> = ArrayList()
-
-    //    private val favoriteItemList: MutableList<FavoritePlace> = ArrayList()
     private val classifyAdapter: ClassifyAdapter = ClassifyAdapter(this, classifyItemList)
-
-    //    private val favoriteAdapter: FavoriteAdapter = FavoriteAdapter(this, favoriteItemList)
     private var searchFragmentIsShowing: Boolean = false        //判断搜索fragment是否显示
     private var detailFragment: DetailFragment? = null
     var searchFragment: SearchFragment? = null
@@ -96,16 +95,9 @@ class MapActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
         getPermissions()
         setContentView(R.layout.map_activity_map)
 
-        PlaceModel.loadAllData(false) {
-            for (place in PlaceData.placeList) {
-                place.placeName?.let { LogUtils.d("MainActivity", it) }
-            }
-        }
         val userState = ServiceManager.getService(IAccountService::class.java).getVerifyService()
         if (!userState.isLogin() && isNetworkConnected()) {
             //这里只是模拟一下登录，如果有并发需求，自己设计
@@ -182,6 +174,9 @@ class MapActivity : BaseActivity() {
                     pin(PlaceData.collectPlaceList[i].placeCenterX, PlaceData.collectPlaceList[i].placeCenterY)
                 }
                 ZoomInMin(PlaceData.mapData.mapWidth / 2f, PlaceData.mapData.mapHeight / 2f)
+
+                iv_map_lock.setImageResource(R.drawable.map_ic_unlock)
+                iv_map.isLocked = false
             }
         }
 
@@ -266,9 +261,18 @@ class MapActivity : BaseActivity() {
 
         iv_map_back.setOnClickListener {
             onBackPressed()
-
             //收起键盘
             hideKeyBoard()
+        }
+
+        iv_map_lock.setOnClickListener {
+            if (iv_map.isLocked) {
+                iv_map_lock.setImageResource(R.drawable.map_ic_unlock)
+                iv_map.isLocked = false
+            } else {
+                iv_map_lock.setImageResource(R.drawable.map_ic_lock)
+                iv_map.isLocked = true
+            }
         }
 
         initObserver()
@@ -280,6 +284,9 @@ class MapActivity : BaseActivity() {
         } else {
             CyxbsToast.makeText(BaseApp.context, "无网络，加载本地数据", Toast.LENGTH_SHORT).show()
             MapDataModel.loadMapData()
+            PlaceModel.loadAllData(false) {
+                LogUtils.d("MapActivity", PlaceData.placeList.size.toString())
+            }
             PlaceModel.loadCollect(false) {
                 LogUtils.d("MapActivity", PlaceData.collectPlaceList.size.toString())
             }
@@ -481,6 +488,7 @@ class MapActivity : BaseActivity() {
             val animationBuilder: AnimationBuilder? = iv_map.animateScaleAndCenter(scale, center)
             animationBuilder?.withOnAnimationEventListener(object : SubsamplingScaleImageView.OnAnimationEventListener {
                 override fun onComplete() {
+                    iv_map.lastPlace = getPlaceById(placeId)
                     loadDetailFragment(placeId)
                 }
 
@@ -663,12 +671,14 @@ class MapActivity : BaseActivity() {
     private fun getPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
             ) {
                 ActivityCompat.requestPermissions(
                         this, arrayOf(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA
                 ), 1
                 )
             }
@@ -683,8 +693,10 @@ class MapActivity : BaseActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
-            1 -> if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            1 -> if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 CyxbsToast.makeText(BaseApp.context, "无法获取存储权限，程序可能异常", Toast.LENGTH_LONG).show()
+            } else if (grantResults.isEmpty() || grantResults[2] != PackageManager.PERMISSION_GRANTED) {
+                CyxbsToast.makeText(BaseApp.context, "无法获取相机权限，程序可能异常", Toast.LENGTH_LONG).show()
             } else {
                 if (needGetMap == 1) {
                     CyxbsToast.makeText(BaseApp.context, "成功获取权限，第二次操作成功！", Toast.LENGTH_SHORT).show()
@@ -735,6 +747,26 @@ class MapActivity : BaseActivity() {
                 }
             }
             if (times != 0) ZoomInMin(PlaceData.mapData.mapWidth / 2f, PlaceData.mapData.mapHeight / 2f)
+            iv_map_lock.setImageResource(R.drawable.map_ic_unlock)
+            iv_map.isLocked = false
+        }
+    }
+
+    fun getPlaceById(placeId: Int): Place? {
+        for (i: Int in PlaceData.placeList.indices) {
+            if (PlaceData.placeList[i].placeId == placeId) {
+                return PlaceData.placeList[i]
+            }
+        }
+        return null
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            viewModel.uploadPhoto(Matisse.obtainResult(data), Matisse.obtainPathResult(data), DetailFragment.placeId)
+//            mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data))
+//            Log.e("OnActivityResult ", Matisse.obtainOriginalState(data).toString())
         }
     }
 }

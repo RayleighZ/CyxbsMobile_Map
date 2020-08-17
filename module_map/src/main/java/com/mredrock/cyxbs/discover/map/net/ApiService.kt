@@ -1,6 +1,5 @@
 package com.mredrock.cyxbs.discover.map.net
 
-import androidx.databinding.ObservableField
 import com.mredrock.cyxbs.common.bean.RedrockApiStatus
 import com.mredrock.cyxbs.common.bean.RedrockApiWrapper
 import com.mredrock.cyxbs.discover.map.bean.BasicMapData
@@ -8,6 +7,7 @@ import com.mredrock.cyxbs.discover.map.bean.ClassifyData
 import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
 import com.mredrock.cyxbs.discover.map.bean.PlaceDetail
 import io.reactivex.Observable
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
@@ -31,6 +31,11 @@ interface ApiService {
     @FormUrlEncoded
     @POST("wxapi/magipoke-stumap/searchtype")
     fun getClassifyInfoList(@Field("code") code: String): Observable<RedrockApiWrapper<List<Int>>>
+
+    //上传图片
+    @Multipart
+    @POST("wxapi/magipoke-stumap/rockmap/upload")
+    fun uploadPhoto(@Part photo: MultipartBody.Part, @Part("place_id") placeId: Int): Observable<RedrockApiStatus>
 
     //详细地点
     @FormUrlEncoded

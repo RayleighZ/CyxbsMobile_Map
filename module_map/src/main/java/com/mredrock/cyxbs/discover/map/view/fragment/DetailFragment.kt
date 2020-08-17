@@ -1,18 +1,31 @@
 package com.mredrock.cyxbs.discover.map.view.fragment
 
+import android.Manifest
+import android.app.Application
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mredrock.cyxbs.common.BaseApp
+import com.mredrock.cyxbs.common.component.CyxbsToast
 import com.mredrock.cyxbs.common.ui.BaseViewModelFragment
+import com.mredrock.cyxbs.common.utils.LogUtils
+import com.mredrock.cyxbs.common.utils.extensions.dp2px
 import com.mredrock.cyxbs.common.utils.extensions.getStatusBarHeight
 import com.mredrock.cyxbs.common.utils.extensions.invisible
 import com.mredrock.cyxbs.common.utils.extensions.visible
@@ -25,6 +38,13 @@ import com.mredrock.cyxbs.discover.map.util.MapAlertDialogUtil.setOnClickListene
 import com.mredrock.cyxbs.discover.map.view.activity.ShowAllPicActivity
 import com.mredrock.cyxbs.discover.map.view.adapter.DetailViewPageAdapter
 import com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel
+import com.zhihu.matisse.Matisse
+import com.zhihu.matisse.MimeType
+import com.zhihu.matisse.engine.impl.GlideEngine
+import com.zhihu.matisse.filter.Filter
+import com.zhihu.matisse.internal.entity.CaptureStrategy
+import com.zhihu.matisse.listener.OnCheckedListener
+import com.zhihu.matisse.listener.OnSelectedListener
 import kotlinx.android.synthetic.main.map_fragment_detail.*
 import java.lang.ref.WeakReference
 
@@ -107,7 +127,7 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         map_tv_show_maore_pic.setOnClickListener {
             context?.let { it1 ->
                 val arrayList = ArrayList<String>(viewModel.listOfPicUrls)
-                ShowAllPicActivity.actionStart(it1,arrayList.toTypedArray() )
+                ShowAllPicActivity.actionStart(it1, arrayList.toTypedArray())
             }
         }
 
@@ -127,10 +147,41 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
 
         map_tv_share_photo.setOnClickListener {
             context?.let {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (it.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                            it.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                            it.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        CyxbsToast.makeText(BaseApp.context, "无权限，请手动打开存储和相机权限", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
+                }
+
                 val dialog: AlertDialog = MapAlertDialogUtil.getMapAlertDialog(it, getString(R.string.map_alert_dialog_share_photo_title),
                         getString(R.string.map_alert_dialog_share_photo_content))
                 dialog.setOnClickListener(View.OnClickListener {
                     dialog.cancel()
+                }, View.OnClickListener {
+                    dialog.cancel()
+                    Matisse.from(activity)
+                            .choose(MimeType.ofImage(), false)
+                            .countable(true)
+                            .capture(true)
+                            .captureStrategy(
+                                    CaptureStrategy(true, "${activity?.application?.packageName}.fileProvider", "cyxbs"))
+                            .maxSelectable(9)
+//                            .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                            .gridExpectedSize(BaseApp.context.dp2px(120f))
+                            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                            .thumbnailScale(0.85f)
+                            .imageEngine(GlideEngine())
+                            .setOnSelectedListener(OnSelectedListener { uriList: List<Uri?>?, pathList: List<String?> -> LogUtils.e("onSelected", "onSelected: pathList=$pathList") })
+                            .showSingleMediaType(true)
+                            .originalEnable(true)
+                            .maxOriginalSize(10)
+                            .autoHideToolbarOnSingleTap(true)
+                            .setOnCheckedListener { isChecked: Boolean -> LogUtils.e("isChecked", "onCheck: isChecked=$isChecked") }
+                            .forResult(1)
                 }).show()
             }
         }

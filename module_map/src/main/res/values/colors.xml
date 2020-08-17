@@ -19,9 +19,9 @@
 
     <color name="map_fragment_detail_background_color">#FFFFFF</color>
     <color name="map_fragment_detail_top_line_color">#E1EDFB</color>
-    <color name="map_fragment_detail_detail_label_color">#778AA9</color>
+    <color name="map_fragment_detail_detail_label_color">#152F5B</color>
     <color name="map_fragment_detail_share_photo_color">#234780</color>
-    <color name="map_fragment_detail_about_place_color">#778AA9</color>
+    <color name="map_fragment_detail_about_place_color">#152F5B</color>
 
     <color name="map_alert_dialog_title_color">#15305C</color>
     <color name="map_alert_dialog_content_color">#132F5B</color>

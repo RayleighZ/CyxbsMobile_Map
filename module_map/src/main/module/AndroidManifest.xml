@@ -12,8 +12,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".view.activity.ShowAllPicActivity"
-            android:theme="@style/AppTheme.TranslucentStatus">
-        </activity>
+            android:theme="@style/AppTheme.TranslucentStatus"/>
         <activity
             android:name=".view.activity.MapActivity"
             android:theme="@style/AppTheme.TranslucentStatus">
