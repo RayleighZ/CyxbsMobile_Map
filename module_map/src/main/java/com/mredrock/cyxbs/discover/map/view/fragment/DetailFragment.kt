@@ -1,13 +1,11 @@
 package com.mredrock.cyxbs.discover.map.view.fragment
 
 import android.Manifest
-import android.app.Application
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mredrock.cyxbs.common.BaseApp
@@ -41,9 +37,7 @@ import com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
-import com.zhihu.matisse.filter.Filter
 import com.zhihu.matisse.internal.entity.CaptureStrategy
-import com.zhihu.matisse.listener.OnCheckedListener
 import com.zhihu.matisse.listener.OnSelectedListener
 import kotlinx.android.synthetic.main.map_fragment_detail.*
 import java.lang.ref.WeakReference

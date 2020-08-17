@@ -52,7 +52,6 @@ class ShowAllPicActivity : BaseActivity() {
 
     override val isFragmentActivity = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_activity_show_all_pic)
@@ -118,7 +117,6 @@ class ShowAllPicActivity : BaseActivity() {
 
     private fun initStatusBar() {
         val statusBarLinearParams = view_map_allpic_status_bar.layoutParams
-        //LogUtils.d("ShowAllPicActivity" , "hight is"+getStatusBarHeight().toString())
         statusBarLinearParams.height = getStatusBarHeight()
         view_map_allpic_status_bar.layoutParams = statusBarLinearParams
         LogUtils.d("ShowAllPicActivity", "hight is" + getStatusBarHeight().toString())

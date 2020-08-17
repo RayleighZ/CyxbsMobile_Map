@@ -1,13 +1,9 @@
 package com.mredrock.cyxbs.discover.map.view.adapter
 
-import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -17,11 +13,8 @@ import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.utils.extensions.dp2px
 import com.mredrock.cyxbs.discover.map.R
 import com.mredrock.cyxbs.discover.map.view.activity.ShowAllPicActivity
-import org.jetbrains.anko.matchParent
-import org.jetbrains.anko.padding
 import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.windowManager
-import org.jetbrains.anko.wrapContent
 
 /**
  * @date 2020-08-13

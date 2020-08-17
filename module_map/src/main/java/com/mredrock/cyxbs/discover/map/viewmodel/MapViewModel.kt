@@ -27,7 +27,6 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -65,17 +64,6 @@ class MapViewModel : BaseViewModel() {
         return builder
     }
 
-    fun okHttpClientConfigFun(builder: okhttp3.OkHttpClient.Builder): okhttp3.OkHttpClient.Builder {
-        builder.run {
-            if (BuildConfig.DEBUG) {
-                val logging = HttpLoggingInterceptor()
-                logging.level = HttpLoggingInterceptor.Level.BODY
-                addInterceptor(logging)
-            }
-        }
-        return builder
-    }
-
     fun getOkHttpClientDownloadConfig(builder: okhttp3.OkHttpClient.Builder): okhttp3.OkHttpClient.Builder {
         builder.run {
             if (BuildConfig.DEBUG) {
@@ -98,7 +86,6 @@ class MapViewModel : BaseViewModel() {
             val requestFile: RequestBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file)
             val fileFormat = paths[i].split('.')
             val body: MultipartBody.Part = MultipartBody.Part.createFormData("file", System.currentTimeMillis().toString() + "." + fileFormat[fileFormat.size - 1], requestFile)
-            LogUtils.e("---", "${System.currentTimeMillis().toString() + "." + fileFormat[fileFormat.size - 1]}")
             ApiGenerator.getApiService(ApiService::class.java)
                     .uploadPhoto(body, placeId)
                     .setSchedulers()

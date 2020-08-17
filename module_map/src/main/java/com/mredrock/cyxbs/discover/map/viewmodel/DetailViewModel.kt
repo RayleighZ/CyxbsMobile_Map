@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.util.Predicate
 import androidx.databinding.ObservableField
 import com.google.android.material.chip.ChipGroup
 import com.mredrock.cyxbs.common.BaseApp
-import com.mredrock.cyxbs.common.BuildConfig
 import com.mredrock.cyxbs.common.network.ApiGenerator
 import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.common.utils.extensions.dp2px
@@ -26,11 +24,7 @@ import com.mredrock.cyxbs.discover.map.util.TypeFaceUtil
 import com.mredrock.cyxbs.discover.map.view.adapter.DetailViewPageAdapter
 import com.mredrock.cyxbs.discover.map.view.fragment.DetailFragment
 import com.mredrock.cyxbs.discover.map.view.widget.CycleTextView
-import okhttp3.logging.HttpLoggingInterceptor
 import org.jetbrains.anko.textColor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.ref.WeakReference
 
 /**
@@ -111,8 +105,6 @@ class DetailViewModel : BaseViewModel() {
     }
 
     fun setDetail(llWR: WeakReference<LinearLayout>, chipGroupWR: WeakReference<ChipGroup>, vpAdapter: DetailViewPageAdapter) {
-        ApiGenerator.registerNetSettings(999, { builder -> retrofitConfigFun(builder) }
-                , { builder -> okHttpClientConfigFun(builder) }, true)
         ApiGenerator.getApiService(ApiService::class.java)
                 .getDetail(DetailFragment.placeId)
                 .mapOrThrowApiException()
@@ -141,10 +133,8 @@ class DetailViewModel : BaseViewModel() {
     }
 
     fun addKeep(ivWR: WeakReference<ImageView>) {
-        ApiGenerator.registerNetSettings(999, { builder -> retrofitConfigFun(builder) }
-                , { builder -> okHttpClientConfigFun(builder) }, true)
         ApiGenerator.getApiService(ApiService::class.java)
-                .addKeep(DetailFragment.placeId, "test")
+                .addKeep(DetailFragment.placeId)
                 .setSchedulers()
                 .doFinally { progressDialogEvent.value = ProgressDialogEvent.DISMISS_DIALOG_EVENT }
                 .doOnSubscribe { progressDialogEvent.value = ProgressDialogEvent.SHOW_NONCANCELABLE_DIALOG_EVENT }
@@ -168,8 +158,6 @@ class DetailViewModel : BaseViewModel() {
 
     @SuppressLint("NewApi")
     fun delKeep(ivWR: WeakReference<ImageView>) {
-        ApiGenerator.registerNetSettings(999, { builder -> retrofitConfigFun(builder) }
-                , { builder -> okHttpClientConfigFun(builder) }, true)
         ApiGenerator.getApiService(ApiService::class.java)
                 .delKeep(DetailFragment.placeId)
                 .setSchedulers()
@@ -191,23 +179,5 @@ class DetailViewModel : BaseViewModel() {
                         }
                     }
                 }.lifeCycle()
-    }
-
-    private fun retrofitConfigFun(builder: Retrofit.Builder): Retrofit.Builder {
-        builder.baseUrl("http://118.31.20.31:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        return builder
-    }
-
-    private fun okHttpClientConfigFun(builder: okhttp3.OkHttpClient.Builder): okhttp3.OkHttpClient.Builder {
-        builder.run {
-            if (BuildConfig.DEBUG) {
-                val logging = HttpLoggingInterceptor()
-                logging.level = HttpLoggingInterceptor.Level.BODY
-                addInterceptor(logging)
-            }
-        }
-        return builder
     }
 }

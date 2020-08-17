@@ -63,7 +63,6 @@ class PlaceModel {
 
         fun saveAllCollect(needToJoinIn : Boolean,onSaved: () -> Unit) {
             FavoriteDataBase.getDataBase(needToJoinIn){
-                LogUtils.e("---","${PlaceData.collectPlaceList.size}")
                 for (place in PlaceData.collectPlaceList){
                     LogUtils.d("TTEESSTT" , place.placeName.toString() + " " + place.placeId)
                 }

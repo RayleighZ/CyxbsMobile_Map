@@ -1,25 +1,20 @@
 package com.mredrock.cyxbs.discover.map.view.widget
 
-//import com.mredrock.cyxbs.common.component.CyxbsToast
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.NinePatchDrawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View.OnTouchListener
 import android.widget.Toast
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.component.CyxbsToast
-import com.mredrock.cyxbs.common.utils.LogUtils
 import com.mredrock.cyxbs.discover.map.bean.Place
 import com.mredrock.cyxbs.discover.map.config.PlaceData
 import com.mredrock.cyxbs.discover.map.view.activity.MapActivity
-import kotlin.math.sqrt
 
 class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? = null) : SubsamplingScaleImageView(context, attr) {
     private val gestureDetector = GestureDetector(MySimpleOnGestureListener())
@@ -30,10 +25,8 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
     private var sPinList: MutableList<PointF> = ArrayList()
     private var sPinSize = PointF()
     var isLocked = false
-
     var lastPlace: Place? = null
 
-    //    private var pinList: MutableList<ImageView> = ArrayList()
     private var pinBitmapList: MutableList<Bitmap> = ArrayList()
 
     fun removeAllPin() {
@@ -76,25 +69,6 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
 
     init {
         setOnTouchListener { view, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
-    }
-
-    fun convertDrawableToBitmap(drawable: Drawable?): Bitmap? {
-        return if (drawable is BitmapDrawable) {
-            drawable.bitmap
-        } else if (drawable is NinePatchDrawable) {
-            val bitmap = Bitmap
-                    .createBitmap(
-                            drawable.getIntrinsicWidth(),
-                            drawable.getIntrinsicHeight(),
-                            if (drawable.getOpacity() !== PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565)
-            val canvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight())
-            drawable.draw(canvas)
-            bitmap
-        } else {
-            null
-        }
     }
 
     inner class MySimpleOnGestureListener() : GestureDetector.SimpleOnGestureListener() {
@@ -166,7 +140,6 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
                                                     PlaceData.placeList[i].placeId)
                                         }
                                     }
-//                                    CyxbsToast.makeText(BaseApp.context, PlaceData.placeList[i].placeName.toString(), Toast.LENGTH_LONG).show()
                                     isFind = true
                                 }
                             }

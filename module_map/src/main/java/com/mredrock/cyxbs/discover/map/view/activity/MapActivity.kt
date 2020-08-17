@@ -420,7 +420,6 @@ class MapActivity : BaseActivity() {
                 val mapPath = Environment.getExternalStorageDirectory().absolutePath + "/CQUPTMap/CQUPTMap.jpg"
 
                 if (File(mapPath).exists() && MapDataModel.getMapTimeStamp() >= mapTimeStamp) {
-//                if (File(mapPath).exists()) {
                     this@MapActivity.iv_map.setImage(ImageSource.uri(mapPath))
                 } else {
                     if (ContextCompat.checkSelfPermission(
@@ -500,16 +499,6 @@ class MapActivity : BaseActivity() {
 
             })
             animationBuilder?.withDuration(700)?.withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)?.withInterruptible(false)?.start()
-
-            //TODO:在MVVM的Model里进行数据库操作
-            Thread(Runnable {
-                // TODO: 2020/8/14 0014 下面两行会导致崩溃
-//                val placeArray = PlaceDatabase.getDataBase(this@MapActivity)
-//                        .getPlaceDao().queryAllPlaces()
-                // TODO: placeArray[0]下标越界
-//                PlaceData.placeList.add(placeArray[0])
-                //PlaceData.placeList[0].placeName?.let { LogUtils.d("MapActivity" , it) }
-            }).start()
 
             detailFragmentScroll(BottomSheetBehavior.STATE_COLLAPSED)
         }
@@ -595,45 +584,7 @@ class MapActivity : BaseActivity() {
         }
     }
 
-    /**
-     * 计算出来的位置，y方向就在anchorView的上面和下面对齐显示，x方向就是与屏幕右边对齐显示
-     * 如果anchorView的位置有变化，就可以适当自己额外加入偏移来修正
-     * @param anchorView 呼出window的view
-     * @param contentView  window的内容布局
-     * @return window显示的左上角的xOff,yOff坐标
-     */
-    private fun calculatePopWindowPos(anchorView: View, contentView: View): IntArray? {
-        val windowPos = IntArray(2)
-        val anchorLoc = IntArray(2)
-        // 获取锚点View在屏幕上的左上角坐标位置
-        anchorView.getLocationOnScreen(anchorLoc)
-        val anchorHeight = anchorView.height
-        // 获取屏幕的高宽
-        val defaultDisplay = windowManager.defaultDisplay
-        val point = Point()
-        defaultDisplay.getSize(point)
-        val screenHeight: Int = point.y
-        val screenWidth: Int = point.x
-        contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-        // 计算contentView的高宽
-        val windowHeight = contentView.measuredHeight
-        val windowWidth = contentView.measuredWidth
-        // 判断需要向上弹出还是向下弹出显示
-        val isNeedShowUp = screenHeight - anchorLoc[1] - anchorHeight < windowHeight
-        if (isNeedShowUp) {
-            windowPos[0] = screenWidth - windowWidth
-            windowPos[1] = anchorLoc[1] - windowHeight
-        } else {
-            windowPos[0] = screenWidth - windowWidth
-            windowPos[1] = anchorLoc[1] + anchorHeight
-        }
-        return windowPos
-    }
-
     private fun loadDetailFragment(placeId: Int) {
-//        val redRockBottomSheetDialog = RedRockBottomSheetDialog(BaseApp.context)
-//        val view = View.inflate(this, R.layout.map_fragment_detail, null)
-//        redRockBottomSheetDialog.setContentView(view)
         DetailFragment.placeId = placeId
         //进一步优化，此处不每一次都产生一次对象，而是地点改变时传递新的id
         if (detailFragment == null) {
@@ -765,8 +716,6 @@ class MapActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             viewModel.uploadPhoto(Matisse.obtainResult(data), Matisse.obtainPathResult(data), DetailFragment.placeId)
-//            mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data))
-//            Log.e("OnActivityResult ", Matisse.obtainOriginalState(data).toString())
         }
     }
 }

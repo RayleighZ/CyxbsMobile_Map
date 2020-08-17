@@ -2,7 +2,6 @@ package com.mredrock.cyxbs.discover.map.database
 
 import androidx.room.*
 import com.mredrock.cyxbs.discover.map.bean.Place
-import io.reactivex.Flowable
 
 /**
  * @date 2020-08-08

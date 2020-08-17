@@ -3,15 +3,10 @@ package com.mredrock.cyxbs.discover.map.view.widget
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.Gravity
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatTextView
-import com.google.android.material.internal.ContextUtils
 import com.mredrock.cyxbs.common.BaseApp
 import com.mredrock.cyxbs.common.utils.extensions.dp2px
-import org.jetbrains.anko.textColor
 
 /**
  * @date 2020-08-08
