@@ -11,7 +11,6 @@ import com.mredrock.cyxbs.discover.map.R
 
 
 object DownloadProgressDialogUtil {
-    var dialogView: View? = null
     var pbProgress: ProgressBar? = null
 
     fun getDownloadProgressDialog(context: Context, title: String): AlertDialog {

@@ -1,16 +1,12 @@
 package com.mredrock.cyxbs.discover.map.view.adapter
 
-import android.R.attr.button
 import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.mredrock.cyxbs.common.BaseApp
-import com.mredrock.cyxbs.common.component.CyxbsToast
 import com.mredrock.cyxbs.common.utils.extensions.gone
 import com.mredrock.cyxbs.common.utils.extensions.visible
 import com.mredrock.cyxbs.discover.map.R
@@ -70,7 +66,6 @@ class ClassifyAdapter(
                 alpha.start()
 
                 //在下面做点击逻辑
-                //CyxbsToast.makeText(BaseApp.context, "点击了：${holder.tvName.text}", Toast.LENGTH_SHORT).show()
                 activity.pinByClassify(item.code ?: "")
             }
         }

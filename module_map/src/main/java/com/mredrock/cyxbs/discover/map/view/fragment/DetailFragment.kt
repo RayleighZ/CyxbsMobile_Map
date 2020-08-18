@@ -1,13 +1,11 @@
 package com.mredrock.cyxbs.discover.map.view.fragment
 
 import android.Manifest
-import android.app.Application
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mredrock.cyxbs.common.BaseApp
@@ -41,9 +37,7 @@ import com.mredrock.cyxbs.discover.map.viewmodel.DetailViewModel
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
-import com.zhihu.matisse.filter.Filter
 import com.zhihu.matisse.internal.entity.CaptureStrategy
-import com.zhihu.matisse.listener.OnCheckedListener
 import com.zhihu.matisse.listener.OnSelectedListener
 import kotlinx.android.synthetic.main.map_fragment_detail.*
 import java.lang.ref.WeakReference
@@ -84,9 +78,9 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
                     viewModel.curPlace = curPlace
                     viewModel.setDetail(WeakReference(ll_map_icon_container), WeakReference(chip_group_detail_container), vpAdapter)
                     if (curPlace.isCollected) {
-                        map_iv_keep.setImageResource(R.drawable.map_ic_collected)
+                        iv_map_keep.setImageResource(R.drawable.map_ic_collected)
                     } else {
-                        map_iv_keep.setImageResource(R.drawable.map_ic_stared)
+                        iv_map_keep.setImageResource(R.drawable.map_ic_stared)
                     }
                 }
             }
@@ -97,14 +91,17 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         super.onViewCreated(view, savedInstanceState)
         //viewModel.setIcon(WeakReference(view.findViewById(R.id.ll_map_icon_container)), listOf("操场", "活动中心"))
         //viewModel.setDetails(WeakReference(view.findViewById(R.id.chip_group_detail_container)), listOf("热爱跑步的请进", "太强了跑步的涛哥", "张涛男神出没", "卑微张煜在线减肥"))
+        if (activity == null)
+            return
+
         vpAdapter = DetailViewPageAdapter()
-        map_viewpager.adapter = vpAdapter
-        map_viewpager.pageMargin = 24
+        vp_map_detail_fragment.adapter = vpAdapter
+        vp_map_detail_fragment.pageMargin = 24
         //viewModel.setDetailPic(vpAdapter, listOf())
         tv_map_place_name.isSelected = true
         refresh(placeId)
 
-        map_iv_keep.setOnClickListener {
+        iv_map_keep.setOnClickListener {
             if (curPlace.isCollected) {
                 context?.let {
                     val dialog: AlertDialog = MapAlertDialogUtil.getMapAlertDialog(it, "取消收藏",
@@ -115,16 +112,16 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
                             },
                             View.OnClickListener {
                                 dialog.cancel()
-                                viewModel.delKeep(WeakReference(map_iv_keep))
+                                viewModel.delKeep(WeakReference(iv_map_keep))
                             }
                     ).show()
                 }
             } else {
-                viewModel.addKeep(WeakReference(map_iv_keep))
+                viewModel.addKeep(WeakReference(iv_map_keep))
             }
         }
 
-        map_tv_show_maore_pic.setOnClickListener {
+        tv_map_show_more_pic.setOnClickListener {
             context?.let { it1 ->
                 val arrayList = ArrayList<String>(viewModel.listOfPicUrls)
                 ShowAllPicActivity.actionStart(it1, arrayList.toTypedArray())
@@ -134,7 +131,7 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
         //动态设置头部可见高度
         val params = (mView.parent as View).layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior
-        map_textview2?.let {
+        iv_map_detail?.let {
             it.post {
                 if (behavior is BottomSheetBehavior) {
                     behavior.peekHeight = it.top + BaseApp.context.getStatusBarHeight()
@@ -145,7 +142,7 @@ class DetailFragment : BaseViewModelFragment<DetailViewModel>() {
 
         //viewModel.setDetailPic(vpAdapter , listOf("https://bihu-head.oss-cn-chengdu.aliyuncs.com/Eva3.jpg" , "https://bihu-head.oss-cn-chengdu.aliyuncs.com/eva.png" , "瞎数据"))
 
-        map_tv_share_photo.setOnClickListener {
+        tv_map_share_photo.setOnClickListener {
             context?.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (it.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||

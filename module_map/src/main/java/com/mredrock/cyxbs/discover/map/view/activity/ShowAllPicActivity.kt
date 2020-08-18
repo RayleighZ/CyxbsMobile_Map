@@ -42,6 +42,8 @@ class ShowAllPicActivity : BaseActivity() {
 
     private var showPicFragment: ShowPicFragment? = null
 
+    lateinit var photoStreamAdapter: PhotoStreamAdapter
+
     companion object{
         fun actionStart(context: Context, arrayOfUrls: Array<String>){
             val intent = Intent(context , ShowAllPicActivity::class.java)
@@ -52,12 +54,11 @@ class ShowAllPicActivity : BaseActivity() {
 
     override val isFragmentActivity = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_activity_show_all_pic)
 
-        iv_map_allpic_back.onClick {
+        iv_map_all_pic_back.onClick {
             finish()
         }
 
@@ -65,16 +66,16 @@ class ShowAllPicActivity : BaseActivity() {
 
         val urls = intent.getStringArrayExtra("urls")
         if (urls.isEmpty()) {
-            tv_map_allpic_no_more.visible()
+            tv_map_all_pic_no_more.visible()
         } else {
             iv_map_placeholder.invisible()
-            tv_map_allpic_no_more.invisible()
-            rv_map_allpic_show_photo.adapter = PhotoStreamAdapter(urls , this , this)
-
-            rv_map_allpic_show_photo.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            tv_map_all_pic_no_more.invisible()
+            photoStreamAdapter = PhotoStreamAdapter(urls , this , this)
+            rv_map_all_pic_show_photo.adapter = photoStreamAdapter
+            rv_map_all_pic_show_photo.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
 
-        tv_map_allpic_share.setOnClickListener {
+        tv_map_all_pic_share.setOnClickListener {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
@@ -117,10 +118,9 @@ class ShowAllPicActivity : BaseActivity() {
     }
 
     private fun initStatusBar() {
-        val statusBarLinearParams = view_map_allpic_status_bar.layoutParams
-        //LogUtils.d("ShowAllPicActivity" , "hight is"+getStatusBarHeight().toString())
+        val statusBarLinearParams = view_map_all_pic_status_bar.layoutParams
         statusBarLinearParams.height = getStatusBarHeight()
-        view_map_allpic_status_bar.layoutParams = statusBarLinearParams
+        view_map_all_pic_status_bar.layoutParams = statusBarLinearParams
         LogUtils.d("ShowAllPicActivity", "hight is" + getStatusBarHeight().toString())
     }
 

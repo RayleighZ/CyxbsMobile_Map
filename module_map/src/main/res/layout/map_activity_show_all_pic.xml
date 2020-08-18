@@ -8,14 +8,14 @@
     tools:context=".view.activity.ShowAllPicActivity">
 
     <View
-        android:id="@+id/view_map_allpic_status_bar"
+        android:id="@+id/view_map_all_pic_status_bar"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
-        android:id="@+id/map_typefacetextview"
+        android:id="@+id/map_tv_all_picture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -25,11 +25,11 @@
         android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_map_allpic_status_bar"
+        app:layout_constraintTop_toBottomOf="@id/view_map_all_pic_status_bar"
         app:map_typeface="PFSCHTypeface" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_map_allpic_show_photo"
+        android:id="@+id/rv_map_all_pic_show_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -37,30 +37,30 @@
         android:layout_marginEnd="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map_typefacetextview" />
+        app:layout_constraintTop_toBottomOf="@+id/map_tv_all_picture" />
 
     <ImageView
-        android:id="@+id/iv_map_allpic_back"
+        android:id="@+id/iv_map_all_pic_back"
         android:layout_width="7.5dp"
         android:layout_height="15dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="14.5dp"
         android:src="@drawable/map_ic_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_map_allpic_status_bar" />
+        app:layout_constraintTop_toBottomOf="@id/view_map_all_pic_status_bar" />
 
     <ImageView
-        android:id="@+id/iv_map_allpic_share"
+        android:id="@+id/iv_map_all_pic_share"
         android:layout_width="16.5dp"
         android:layout_height="16dp"
         android:layout_marginEnd="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_map_allpic_share"
-        app:layout_constraintEnd_toStartOf="@+id/tv_map_allpic_share"
-        app:layout_constraintTop_toTopOf="@+id/tv_map_allpic_share"
-        app:srcCompat="@mipmap/map_ic_share_higlight" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_map_all_pic_share"
+        app:layout_constraintEnd_toStartOf="@+id/tv_map_all_pic_share"
+        app:layout_constraintTop_toTopOf="@+id/tv_map_all_pic_share"
+        app:srcCompat="@drawable/map_ic_share_highlight" />
 
     <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
-        android:id="@+id/tv_map_allpic_share"
+        android:id="@+id/tv_map_all_pic_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="69dp"
@@ -69,7 +69,7 @@
         android:textColor="@color/map_activity_showpic_share_words_hight_blue"
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_map_allpic_status_bar"
+        app:layout_constraintTop_toBottomOf="@id/view_map_all_pic_status_bar"
         app:map_typeface="PFSCHTypeface" />
 
     <ImageView
@@ -82,11 +82,11 @@
         android:scaleType="fitStart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map_typefacetextview"
+        app:layout_constraintTop_toBottomOf="@+id/map_tv_all_picture"
         app:srcCompat="@drawable/map_ic_none_pic_place_holder" />
 
     <com.mredrock.cyxbs.discover.map.view.widget.TypefaceTextView
-        android:id="@+id/tv_map_allpic_no_more"
+        android:id="@+id/tv_map_all_pic_no_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"

@@ -51,7 +51,7 @@ interface ApiService {
     //增加收藏
     @FormUrlEncoded
     @PATCH("wxapi/magipoke-stumap/rockmap/addkeep")
-    fun addKeep(@Field("place_id") placeId : Int,@Field("place_nickname") placeNickname : String) : Observable<RedrockApiStatus>
+    fun addKeep(@Field("place_id") placeId : Int) : Observable<RedrockApiStatus>
 
     //删除收藏
     @Multipart

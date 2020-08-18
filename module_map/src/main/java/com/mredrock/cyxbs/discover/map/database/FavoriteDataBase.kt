@@ -1,11 +1,9 @@
 package com.mredrock.cyxbs.discover.map.database
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.mredrock.cyxbs.common.BaseApp
-import com.mredrock.cyxbs.discover.map.bean.FavoritePlace
 import com.mredrock.cyxbs.discover.map.bean.Place
 
 /**
