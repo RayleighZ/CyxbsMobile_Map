@@ -296,6 +296,7 @@ class MapActivity : BaseActivity() {
             PlaceModel.loadPlace(false) {
                 LogUtils.d("MapActivity", PlaceData.placeList.size.toString())
             }*/
+
             this.mapTimeStamp = PlaceData.mapData.mapTimeStamp
 
             iv_map.setBackgroundColor(Color.parseColor(PlaceData.mapData.mapBackgroundColor))
