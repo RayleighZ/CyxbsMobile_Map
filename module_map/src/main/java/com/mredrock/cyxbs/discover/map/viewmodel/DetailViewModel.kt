@@ -140,7 +140,7 @@ class DetailViewModel : BaseViewModel() {
                 .doOnSubscribe { progressDialogEvent.value = ProgressDialogEvent.SHOW_NONCANCELABLE_DIALOG_EVENT }
                 .safeSubscribeBy {
                     if (it.status == 200 && ivWR.get() != null) {
-                        ivWR.get()?.setImageResource(R.mipmap.map_ic_keeped)
+                        ivWR.get()?.setImageResource(R.drawable.map_ic_collected)
                         curPlace.isCollected = true
 
                         PlaceModel.insertCollectPlace(false , curPlace)

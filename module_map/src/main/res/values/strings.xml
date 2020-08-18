@@ -30,4 +30,6 @@
     <string name="map_activity_collect_cancel">取消</string>
     <string name="map_activity_collect_uncollect_place">不再收藏该地点</string>
     <string name="map_activity_download_map">正在下载地图</string>
+    <string name="map_detail_fragment_share_photo_with_others">与大家分享你拍摄的此地点</string>
+    <string name="map_detail_fragment_show_more">查看更多</string>
 </resources>

@@ -16,10 +16,9 @@ import com.mredrock.cyxbs.discover.map.R
  * @date 2020-08-11
  * @author Sca RayleighZ
  */
-class DetailViewPageAdapter : PagerAdapter(){
+class DetailViewPageAdapter : PagerAdapter() {
 
     var listOfImageUrls = ArrayList<String>()
-
 
     //强行刷新界面
     override fun getItemPosition(`object`: Any): Int {
@@ -31,7 +30,7 @@ class DetailViewPageAdapter : PagerAdapter(){
     }
 
     override fun getPageWidth(position: Int): Float {
-        if (count == 1){
+        if (count == 1) {
             return 1F
         }
         return 0.8F
@@ -42,7 +41,7 @@ class DetailViewPageAdapter : PagerAdapter(){
     }
 
     override fun getCount(): Int {
-        return  if (listOfImageUrls.isEmpty()){
+        return if (listOfImageUrls.isEmpty()) {
             2
         } else {
             return listOfImageUrls.size
@@ -51,22 +50,21 @@ class DetailViewPageAdapter : PagerAdapter(){
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val iv = ImageView(context)
-        iv.scaleType = ImageView.ScaleType.FIT_CENTER
-        if (count == 1){
-            iv.setPadding(0 , 0 , context.dp2px(15F) , 0)
+        iv.scaleType = ImageView.ScaleType.CENTER_CROP
+        if (count == 1) {
+            iv.setPadding(0, 0, context.dp2px(15F), 0)
         }
-        if (listOfImageUrls.isNotEmpty()){
-            LogUtils.d("DetailVPAdapter" , listOfImageUrls[position])
+        if (listOfImageUrls.isNotEmpty()) {
+            LogUtils.d("DetailVPAdapter", listOfImageUrls[position])
             Glide.with(context).load(listOfImageUrls[position])
                     .apply(RequestOptions.bitmapTransform(RoundedCorners(9)))
                     .placeholder(R.drawable.map_shape_placeholder_detail_pic)
                     .error(R.drawable.map_shape_placeholder_detail_pic)
-                    .override(280 , 185)
+                    .override(280, 185)
                     .into(iv)
-        }
-        else{
+        } else {
             Glide.with(context).load(R.drawable.map_shape_placeholder_detail_pic)
-                    .override(280 , 185)
+                    .override(280, 185)
                     .into(iv)
         }
         container.addView(iv)
